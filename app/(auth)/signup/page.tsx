@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Brain } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,7 +61,9 @@ export default function SignupPage() {
       >
         {/* Logo */}
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="text-4xl">🧠</div>
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+            <Brain className="h-7 w-7 text-primary" />
+          </div>
           <h1 className="text-2xl font-bold text-foreground">MindBase</h1>
           <p className="text-sm text-muted-foreground">
             Create your account

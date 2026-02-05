@@ -21,6 +21,14 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
+import {
+  Calendar,
+  MoreHorizontal,
+  Trash2,
+  Check,
+  RotateCcw,
+  Inbox,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -29,6 +37,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { ICON_MAP, COLOR_PALETTE } from '@/components/icons';
 import type { Item, Destination } from '@/types/database';
 
 interface KanbanViewProps {
@@ -141,7 +150,7 @@ export function KanbanView({
           <KanbanColumn
             id="uncategorized"
             title="Uncategorized"
-            icon="📥"
+            iconName="inbox"
             items={uncategorizedItems}
             destinations={destinations}
             onUpdateItem={onUpdateItem}
@@ -158,7 +167,7 @@ export function KanbanView({
             key={destination.id}
             id={destination.id}
             title={destination.name}
-            icon={destination.icon}
+            iconName={destination.icon}
             color={destination.color}
             items={itemsByDestination[destination.id] || []}
             destinations={destinations}
@@ -187,7 +196,7 @@ export function KanbanView({
 interface KanbanColumnProps {
   id: string;
   title: string;
-  icon: string;
+  iconName: string;
   color?: string;
   items: Item[];
   destinations: Destination[];
@@ -201,7 +210,7 @@ interface KanbanColumnProps {
 function KanbanColumn({
   id,
   title,
-  icon,
+  iconName,
   color,
   items,
   destinations,
@@ -218,6 +227,9 @@ function KanbanColumn({
     },
   });
 
+  const Icon = ICON_MAP[iconName] || Inbox;
+  const colorOption = color ? COLOR_PALETTE.find(c => c.value === color) : null;
+
   return (
     <div
       ref={setNodeRef}
@@ -228,7 +240,12 @@ function KanbanColumn({
     >
       {/* Column header */}
       <div className="mb-3 flex items-center gap-2">
-        <span className="text-lg">{icon}</span>
+        <div className={cn(
+          'flex h-6 w-6 items-center justify-center rounded',
+          colorOption?.bgSubtle || 'bg-muted'
+        )}>
+          <Icon className={cn('h-4 w-4', colorOption?.text || 'text-muted-foreground')} />
+        </div>
         <h3 className="flex-1 font-medium text-foreground">{title}</h3>
         <span className="text-xs text-muted-foreground">{items.length}</span>
       </div>
@@ -352,37 +369,44 @@ function SortableKanbanCard({
             }}
             title="Schedule for tomorrow"
           >
-            <span className="text-xs">📅</span>
+            <Calendar className="h-3 w-3" />
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
               <Button variant="ghost" size="icon" className="h-6 w-6">
-                <span className="text-xs">⋯</span>
+                <MoreHorizontal className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onClick={() => onUpdate(item.id, { is_completed: !item.is_completed })}
               >
-                <span className="mr-2">{item.is_completed ? '↩️' : '✅'}</span>
+                {item.is_completed ? (
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                ) : (
+                  <Check className="mr-2 h-4 w-4" />
+                )}
                 {item.is_completed ? 'Mark incomplete' : 'Mark complete'}
               </DropdownMenuItem>
-              {destinations.map((dest) => (
-                <DropdownMenuItem
-                  key={dest.id}
-                  onClick={() => onMoveToDestination(item.id, dest.id)}
-                  className={item.destination_id === dest.id ? 'bg-accent' : ''}
-                >
-                  <span className="mr-2">{dest.icon}</span>
-                  Move to {dest.name}
-                </DropdownMenuItem>
-              ))}
+              {destinations.map((dest) => {
+                const DestIcon = ICON_MAP[dest.icon] || Inbox;
+                return (
+                  <DropdownMenuItem
+                    key={dest.id}
+                    onClick={() => onMoveToDestination(item.id, dest.id)}
+                    className={item.destination_id === dest.id ? 'bg-accent' : ''}
+                  >
+                    <DestIcon className="mr-2 h-4 w-4" />
+                    Move to {dest.name}
+                  </DropdownMenuItem>
+                );
+              })}
               <DropdownMenuItem
                 onClick={() => onDelete(item.id)}
                 className="text-destructive focus:text-destructive"
               >
-                <span className="mr-2">🗑️</span>
+                <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>

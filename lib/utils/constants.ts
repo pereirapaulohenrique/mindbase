@@ -11,15 +11,15 @@ export const LAYERS = {
 
 export type Layer = (typeof LAYERS)[keyof typeof LAYERS];
 
-// Default Destinations
+// Default Destinations (icon names map to Lucide icons)
 export const DEFAULT_DESTINATIONS = [
-  { slug: 'backlog', name: 'Backlog', icon: '📋', color: 'blue' },
-  { slug: 'reference', name: 'Reference', icon: '📚', color: 'purple' },
-  { slug: 'incubating', name: 'Incubating', icon: '💡', color: 'yellow' },
-  { slug: 'someday', name: 'Someday', icon: '🌙', color: 'gray' },
-  { slug: 'questions', name: 'Questions', icon: '❓', color: 'pink' },
-  { slug: 'waiting', name: 'Waiting', icon: '⏳', color: 'orange' },
-  { slug: 'trash', name: 'Trash', icon: '🗑️', color: 'red' },
+  { slug: 'backlog', name: 'Backlog', icon: 'list-todo', color: 'blue', description: 'Actions without dates' },
+  { slug: 'reference', name: 'Reference', icon: 'book-open', color: 'purple', description: 'Info to consult later' },
+  { slug: 'incubating', name: 'Incubating', icon: 'lightbulb', color: 'amber', description: 'Ideas to develop' },
+  { slug: 'someday', name: 'Someday', icon: 'moon', color: 'indigo', description: 'Maybe one day' },
+  { slug: 'questions', name: 'Questions', icon: 'help-circle', color: 'pink', description: 'Things to research' },
+  { slug: 'waiting', name: 'Waiting', icon: 'clock', color: 'orange', description: 'Delegated/waiting on others' },
+  { slug: 'trash', name: 'Trash', icon: 'trash-2', color: 'red', description: 'Things to forget' },
 ] as const;
 
 // Subscription Plans

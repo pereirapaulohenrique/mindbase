@@ -15,28 +15,40 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Inbox,
+  ArrowRight,
+  Calendar,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Brain,
+  type LucideIcon,
+} from 'lucide-react';
+import { ICON_MAP, COLOR_PALETTE } from '@/components/icons';
 
-// Navigation items
-const mainNav = [
-  { href: '/capture', label: 'Capture', icon: '📥', shortcut: '⌘1' },
-  { href: '/process', label: 'Process', icon: '🔄', shortcut: '⌘2' },
-  { href: '/commit', label: 'Commit', icon: '📅', shortcut: '⌘3' },
+// Navigation items with Lucide icons
+const mainNav: { href: string; label: string; icon: LucideIcon; shortcut: string }[] = [
+  { href: '/capture', label: 'Capture', icon: Inbox, shortcut: '⌘1' },
+  { href: '/process', label: 'Process', icon: ArrowRight, shortcut: '⌘2' },
+  { href: '/commit', label: 'Commit', icon: Calendar, shortcut: '⌘3' },
 ];
 
-const bottomNav = [
-  { href: '/settings', label: 'Settings', icon: '⚙️' },
+const bottomNav: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 interface SidebarProps {
   inboxCount?: number;
   spaces?: { id: string; name: string; icon: string; color: string }[];
-  projects?: { id: string; name: string; icon: string; color: string }[];
+  projects?: { id: string; name: string; icon: string; color: string; space_id?: string }[];
   pages?: { id: string; title: string; icon: string }[];
 }
 
 export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = [] }: SidebarProps) {
   const pathname = usePathname();
-  const { sidebarCollapsed, toggleSidebar, setSidebarCollapsed } = useUIStore();
+  const { sidebarCollapsed, toggleSidebar } = useUIStore();
 
   // Handle keyboard shortcut for sidebar toggle
   useEffect(() => {
@@ -57,12 +69,14 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
         initial={false}
         animate={{ width: sidebarCollapsed ? 64 : 240 }}
         transition={{ duration: 0.2, ease: 'easeInOut' }}
-        className="fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-border bg-sidebar"
+        className="fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-border bg-sidebar backdrop-blur-xl"
       >
         {/* Header */}
         <div className="flex h-14 items-center justify-between px-3">
           <Link href="/capture" className="flex items-center gap-2">
-            <span className="text-xl">🧠</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+              <Brain className="h-5 w-5 text-primary" />
+            </div>
             <AnimatePresence>
               {!sidebarCollapsed && (
                 <motion.span
@@ -83,7 +97,7 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
               className="h-8 w-8 text-sidebar-foreground"
               onClick={toggleSidebar}
             >
-              <span className="text-sm">◀</span>
+              <ChevronLeft className="h-4 w-4" />
             </Button>
           )}
         </div>
@@ -94,9 +108,12 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
             {mainNav.map((item) => (
               <NavItem
                 key={item.href}
-                {...item}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
                 isActive={pathname === item.href}
                 isCollapsed={sidebarCollapsed}
+                shortcut={item.shortcut}
                 badge={item.href === '/capture' && inboxCount > 0 ? inboxCount : undefined}
               />
             ))}
@@ -107,25 +124,25 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
           {/* Spaces Section */}
           {!sidebarCollapsed && (
             <div className="py-2">
-              <SectionHeader title="Spaces" />
+              <SectionHeader title="Spaces" href="/spaces" />
               <div className="space-y-1">
                 {spaces.map((space) => (
-                  <NavItem
+                  <DynamicNavItem
                     key={space.id}
-                    href={`/process?space=${space.id}`}
+                    href={`/spaces/${space.id}`}
                     label={space.name}
-                    icon={space.icon}
-                    isActive={false}
-                    isCollapsed={false}
+                    iconName={space.icon}
+                    color={space.color}
+                    isActive={pathname === `/spaces/${space.id}`}
                   />
                 ))}
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground"
+                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground h-8"
                   asChild
                 >
                   <Link href="/spaces">
-                    <span className="mr-2">+</span> Add Space
+                    <Plus className="h-4 w-4 mr-2" /> Add Space
                   </Link>
                 </Button>
               </div>
@@ -135,25 +152,25 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
           {/* Projects Section */}
           {!sidebarCollapsed && (
             <div className="py-2">
-              <SectionHeader title="Projects" />
+              <SectionHeader title="Projects" href="/projects" />
               <div className="space-y-1">
                 {projects.map((project) => (
-                  <NavItem
+                  <DynamicNavItem
                     key={project.id}
-                    href={`/process?project=${project.id}`}
+                    href={`/projects/${project.id}`}
                     label={project.name}
-                    icon={project.icon}
-                    isActive={false}
-                    isCollapsed={false}
+                    iconName={project.icon}
+                    color={project.color}
+                    isActive={pathname === `/projects/${project.id}`}
                   />
                 ))}
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground"
+                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground h-8"
                   asChild
                 >
                   <Link href="/projects">
-                    <span className="mr-2">+</span> Add Project
+                    <Plus className="h-4 w-4 mr-2" /> Add Project
                   </Link>
                 </Button>
               </div>
@@ -163,25 +180,24 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
           {/* Pages Section */}
           {!sidebarCollapsed && (
             <div className="py-2">
-              <SectionHeader title="Pages" />
+              <SectionHeader title="Pages" href="/pages" />
               <div className="space-y-1">
                 {pages.slice(0, 5).map((page) => (
-                  <NavItem
+                  <DynamicNavItem
                     key={page.id}
                     href={`/pages/${page.id}`}
                     label={page.title}
-                    icon={page.icon}
+                    iconName={page.icon || 'file-text'}
                     isActive={pathname === `/pages/${page.id}`}
-                    isCollapsed={false}
                   />
                 ))}
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground"
+                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground h-8"
                   asChild
                 >
                   <Link href="/pages">
-                    <span className="mr-2">+</span> New Page
+                    <Plus className="h-4 w-4 mr-2" /> New Page
                   </Link>
                 </Button>
               </div>
@@ -194,7 +210,9 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
           {bottomNav.map((item) => (
             <NavItem
               key={item.href}
-              {...item}
+              href={item.href}
+              label={item.label}
+              icon={item.icon}
               isActive={pathname.startsWith(item.href)}
               isCollapsed={sidebarCollapsed}
             />
@@ -210,7 +228,7 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
               className="w-full h-10"
               onClick={toggleSidebar}
             >
-              <span className="text-sm">▶</span>
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         )}
@@ -219,27 +237,37 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
   );
 }
 
-// Section header component
-function SectionHeader({ title }: { title: string }) {
-  return (
+// Section header component with link
+function SectionHeader({ title, href }: { title: string; href?: string }) {
+  const content = (
     <h3 className="mb-1 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
       {title}
     </h3>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="block hover:text-foreground transition-colors">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }
 
-// Navigation item component
+// Navigation item with Lucide icon component
 interface NavItemProps {
   href: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   isActive: boolean;
   isCollapsed: boolean;
   shortcut?: string;
   badge?: number;
 }
 
-function NavItem({ href, label, icon, isActive, isCollapsed, shortcut, badge }: NavItemProps) {
+function NavItem({ href, label, icon: Icon, isActive, isCollapsed, shortcut, badge }: NavItemProps) {
   const content = (
     <Link
       href={href}
@@ -251,10 +279,10 @@ function NavItem({ href, label, icon, isActive, isCollapsed, shortcut, badge }: 
         isCollapsed && 'justify-center px-2'
       )}
     >
-      <span className="text-base">{icon}</span>
+      <Icon className="h-4 w-4 flex-shrink-0" />
       {!isCollapsed && (
         <>
-          <span className="flex-1">{label}</span>
+          <span className="flex-1 truncate">{label}</span>
           {badge !== undefined && badge > 0 && (
             <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
               {badge > 99 ? '99+' : badge}
@@ -281,4 +309,38 @@ function NavItem({ href, label, icon, isActive, isCollapsed, shortcut, badge }: 
   }
 
   return content;
+}
+
+// Dynamic navigation item for user-created items (spaces, projects, pages)
+interface DynamicNavItemProps {
+  href: string;
+  label: string;
+  iconName: string;
+  color?: string;
+  isActive: boolean;
+}
+
+function DynamicNavItem({ href, label, iconName, color, isActive }: DynamicNavItemProps) {
+  const Icon = ICON_MAP[iconName] || ICON_MAP['folder'];
+  const colorOption = color ? COLOR_PALETTE.find(c => c.value === color) : null;
+
+  return (
+    <Link
+      href={href}
+      className={cn(
+        'flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors',
+        isActive
+          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+          : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+      )}
+    >
+      <div className={cn(
+        'flex h-5 w-5 items-center justify-center rounded',
+        colorOption?.bgSubtle || 'bg-muted'
+      )}>
+        <Icon className={cn('h-3 w-3', colorOption?.text || 'text-muted-foreground')} />
+      </div>
+      <span className="flex-1 truncate">{label}</span>
+    </Link>
+  );
 }
