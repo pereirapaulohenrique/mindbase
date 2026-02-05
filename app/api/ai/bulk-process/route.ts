@@ -135,19 +135,20 @@ function transformResults(
 
   const itemMap = new Map(items.map(item => [item.id, item]));
 
-  return result.map(r => {
+  return result.flatMap(r => {
     const item = itemMap.get(r.item_id);
-    if (!item) return null;
+    if (!item) return [];
 
     let suggestion = '';
     let destinationSlug: string | undefined;
 
     switch (action) {
-      case 'categorize':
+      case 'categorize': {
         const dest = destinations?.find(d => d.slug === r.destination);
         suggestion = `Move to ${dest?.name || r.destination}`;
         destinationSlug = r.destination;
         break;
+      }
       case 'merge':
         suggestion = r.merge_suggestion || `Merge with similar items`;
         break;
@@ -157,19 +158,20 @@ function transformResults(
       case 'improve':
         suggestion = r.improved_title || item.title;
         break;
-      case 'schedule':
+      case 'schedule': {
         const time = r.suggested_time ? ` at ${r.suggested_time}` : '';
         suggestion = `Schedule for ${r.suggested_date}${time}`;
         break;
+      }
     }
 
-    return {
-      itemId: r.item_id,
+    return [{
+      itemId: r.item_id as string,
       itemTitle: item.title,
       suggestion,
       destinationSlug,
-      confidence: r.confidence || 0.5,
-      reasoning: r.reasoning || '',
-    };
-  }).filter((s): s is BulkSuggestion => s !== null);
+      confidence: (r.confidence || 0.5) as number,
+      reasoning: (r.reasoning || '') as string,
+    }];
+  });
 }
