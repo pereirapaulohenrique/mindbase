@@ -94,7 +94,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     // Recurring subscription
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
-    ) as Stripe.Subscription;
+    ) as any;
 
     await supabaseAdmin
       .from('subscriptions')
@@ -111,7 +111,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   }
 }
 
-async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
+async function handleSubscriptionUpdate(subscription: any) {
   const customerId = subscription.customer as string;
 
   // Find user by Stripe customer ID
@@ -144,7 +144,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     .eq('user_id', sub.user_id);
 }
 
-async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+async function handleSubscriptionDeleted(subscription: any) {
   const customerId = subscription.customer as string;
 
   // Find user by Stripe customer ID
