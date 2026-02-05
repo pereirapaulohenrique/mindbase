@@ -21,7 +21,7 @@ export default function LandingPage() {
     <div className="flex min-h-screen flex-col bg-background">
       {/* Navigation */}
       <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <nav className="container flex h-16 items-center justify-between">
+        <nav className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <Brain className="h-5 w-5 text-primary-foreground" />
@@ -41,7 +41,7 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="container py-24 sm:py-32">
+        <section className="container mx-auto px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
           <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
             <div className="mb-4 inline-flex items-center rounded-full border bg-muted px-4 py-1 text-sm">
               <Sparkles className="mr-2 h-4 w-4 text-primary" />
@@ -75,7 +75,7 @@ export default function LandingPage() {
 
         {/* How It Works */}
         <section id="how-it-works" className="border-y border-border bg-muted/30 py-24">
-          <div className="container">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 Three simple steps to productivity peace
@@ -113,7 +113,7 @@ export default function LandingPage() {
 
         {/* Features Grid */}
         <section className="py-24">
-          <div className="container">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 Everything you need, nothing you don't
@@ -160,7 +160,7 @@ export default function LandingPage() {
 
         {/* Testimonials Placeholder */}
         <section className="border-y border-border bg-muted/30 py-24">
-          <div className="container">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 Built for overthinkers
@@ -179,7 +179,7 @@ export default function LandingPage() {
 
         {/* Pricing Preview */}
         <section className="py-24">
-          <div className="container">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 Simple, honest pricing
@@ -238,7 +238,7 @@ export default function LandingPage() {
 
         {/* CTA Section */}
         <section className="border-t border-border bg-muted/30 py-24">
-          <div className="container">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 Ready to clear your mind?
@@ -258,7 +258,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-border py-12">
-        <div className="container">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
