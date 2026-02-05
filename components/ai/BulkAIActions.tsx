@@ -37,7 +37,7 @@ import { toast } from 'sonner';
 
 export type BulkAIAction = 'categorize' | 'merge' | 'cleanup' | 'improve' | 'schedule';
 
-interface BulkAISuggestion {
+export interface BulkAISuggestion {
   itemId: string;
   itemTitle: string;
   suggestion: string;
