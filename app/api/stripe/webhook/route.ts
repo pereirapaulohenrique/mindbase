@@ -94,7 +94,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     // Recurring subscription
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
-    );
+    ) as Stripe.Subscription;
 
     await supabaseAdmin
       .from('subscriptions')
