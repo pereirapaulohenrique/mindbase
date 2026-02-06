@@ -1,33 +1,29 @@
 /**
- * OffMind Logo
+ * OffMind Logo — Gradient sphere with two teal lines beneath.
  *
- * A custom SVG monogram representing the three-layer GTD system:
- * - Three ascending arcs (Capture → Process → Commit)
- * - Converging into a stable base
- * - Forms an abstract "M" shape
+ * Represents "get it off your mind" — a thought (sphere) landing
+ * safely on a stable base (lines).
  *
- * Uses the brand violet-indigo color with optional gradient treatment.
+ * Gradient: violet #8b5cf6 → violet-indigo #7c5cfc → cyan #22d3ee
  */
 
 interface OffMindLogoProps {
   size?: number;
   className?: string;
   variant?: 'mark' | 'full';
-  showGradient?: boolean;
 }
 
 export function OffMindLogo({
   size = 32,
   className = '',
   variant = 'mark',
-  showGradient = true
 }: OffMindLogoProps) {
-  const id = `om-gradient-${Math.random().toString(36).slice(2, 7)}`;
+  const id = `om-${Math.random().toString(36).slice(2, 7)}`;
 
   if (variant === 'full') {
     return (
       <div className={`flex items-center gap-2.5 ${className}`}>
-        <LogoMark size={size} gradientId={id} showGradient={showGradient} />
+        <SphereMark size={size} id={id} />
         <span
           className="font-semibold tracking-tight text-foreground"
           style={{ fontSize: size * 0.5 }}
@@ -38,160 +34,95 @@ export function OffMindLogo({
     );
   }
 
-  return <LogoMark size={size} gradientId={id} showGradient={showGradient} className={className} />;
+  return <SphereMark size={size} id={id} className={className} />;
 }
 
-function LogoMark({
+function SphereMark({
   size,
-  gradientId,
-  showGradient,
-  className = ''
+  id,
+  className = '',
 }: {
   size: number;
-  gradientId: string;
-  showGradient: boolean;
+  id: string;
   className?: string;
 }) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 32 32"
+      viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-label="OffMind logo"
     >
       <defs>
-        {showGradient && (
-          <>
-            <linearGradient id={`${gradientId}-main`} x1="4" y1="28" x2="28" y2="4" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#7c5cfc" />
-              <stop offset="50%" stopColor="#60a5fa" />
-              <stop offset="100%" stopColor="#34d399" />
-            </linearGradient>
-            <linearGradient id={`${gradientId}-bg`} x1="0" y1="32" x2="32" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#7c5cfc" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="#34d399" stopOpacity="0.06" />
-            </linearGradient>
-          </>
-        )}
+        <linearGradient
+          id={`${id}-grad`}
+          x1="20"
+          y1="90"
+          x2="100"
+          y2="10"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#8b5cf6" />
+          <stop offset="40%" stopColor="#7c5cfc" />
+          <stop offset="100%" stopColor="#22d3ee" />
+        </linearGradient>
+        <radialGradient id={`${id}-shine`} cx="0.35" cy="0.3" r="0.65">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.18)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+        <radialGradient id={`${id}-shadow`} cx="0.5" cy="0.85" r="0.5">
+          <stop offset="0%" stopColor="rgba(0,0,0,0.25)" />
+          <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+        </radialGradient>
       </defs>
 
-      {/* Background rounded square */}
-      <rect
-        width="32"
-        height="32"
-        rx="8"
-        fill={showGradient ? `url(#${gradientId}-bg)` : 'currentColor'}
-        opacity={showGradient ? 1 : 0.08}
-      />
-      <rect
-        width="32"
-        height="32"
-        rx="8"
-        stroke={showGradient ? `url(#${gradientId}-main)` : 'currentColor'}
-        strokeWidth="1"
-        fill="none"
-        opacity={0.2}
-      />
+      {/* Sphere */}
+      <circle cx="60" cy="48" r="38" fill={`url(#${id}-grad)`} />
+      <circle cx="60" cy="48" r="38" fill={`url(#${id}-shine)`} />
+      <circle cx="60" cy="48" r="38" fill={`url(#${id}-shadow)`} />
 
-      {/* Three arcs forming the "M" / mind flow
-          Arc 1 (left, Capture - blue): starts low-left, arcs up
-          Arc 2 (center, Process - blends): starts center-low, arcs highest
-          Arc 3 (right, Commit - green): starts right, arcs up
-          Connected at the base to form a stable foundation */}
-      <g transform="translate(6, 7)">
-        {/* Left arc - Capture */}
-        <path
-          d="M2 18 C2 12, 4 6, 6 4 C7 3, 8 3, 10 6"
-          stroke={showGradient ? '#60a5fa' : 'currentColor'}
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          fill="none"
-          opacity={showGradient ? 1 : 0.7}
-        />
-
-        {/* Center arc - Process (tallest) */}
-        <path
-          d="M10 6 C10 4, 10 2, 10 1 C10 0.5, 10.5 0.5, 10.5 1 C10.5 2, 10.5 4, 10.5 6"
-          stroke={showGradient ? '#fbbf24' : 'currentColor'}
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          fill="none"
-          opacity={showGradient ? 0.9 : 0.5}
-        />
-
-        {/* Right arc - Commit */}
-        <path
-          d="M10.5 6 C12.5 3, 13.5 3, 14.5 4 C16.5 6, 18.5 12, 18.5 18"
-          stroke={showGradient ? '#34d399' : 'currentColor'}
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          fill="none"
-          opacity={showGradient ? 1 : 0.7}
-        />
-
-        {/* Base line - stable foundation */}
-        <path
-          d="M2 18 L18.5 18"
-          stroke={showGradient ? `url(#${gradientId}-main)` : 'currentColor'}
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          fill="none"
-          opacity={showGradient ? 0.8 : 0.5}
-        />
-      </g>
+      {/* Two lines beneath */}
+      <rect x="30" y="94" width="60" height="4" rx="2" fill="#22d3ee" opacity="0.7" />
+      <rect x="38" y="103" width="44" height="3.5" rx="1.75" fill="#22d3ee" opacity="0.35" />
     </svg>
   );
 }
 
 /**
- * Favicon-optimized version (simpler paths for small sizes)
+ * Favicon-optimized version (simplified for 16-20px)
  */
 export function OffMindIcon({ size = 16, className = '' }: { size?: number; className?: string }) {
+  const id = `om-ico-${Math.random().toString(36).slice(2, 7)}`;
+
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 16 16"
+      viewBox="0 0 120 120"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      <rect width="16" height="16" rx="3.5" fill="#7c5cfc" fillOpacity="0.15" />
-      <g transform="translate(3, 3.5)">
-        <path
-          d="M1 9 C1 6, 2 3, 3.5 2 L5 3"
-          stroke="#60a5fa"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M5 3 L5 0.5"
-          stroke="#fbbf24"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.85"
-        />
-        <path
-          d="M5.2 3 C6.5 2, 7 2, 7.5 2.5 C9 4, 9.5 6, 9.5 9"
-          stroke="#34d399"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M1 9 L9.5 9"
-          stroke="#7c5cfc"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.7"
-        />
-      </g>
+      <defs>
+        <linearGradient
+          id={`${id}-grad`}
+          x1="20"
+          y1="90"
+          x2="100"
+          y2="10"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#8b5cf6" />
+          <stop offset="40%" stopColor="#7c5cfc" />
+          <stop offset="100%" stopColor="#22d3ee" />
+        </linearGradient>
+      </defs>
+      <circle cx="60" cy="48" r="38" fill={`url(#${id}-grad)`} />
+      <rect x="30" y="94" width="60" height="5" rx="2.5" fill="#22d3ee" opacity="0.7" />
+      <rect x="38" y="104" width="44" height="4" rx="2" fill="#22d3ee" opacity="0.35" />
     </svg>
   );
 }
