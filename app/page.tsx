@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import {
-  Brain,
   Inbox,
   ArrowRightLeft,
   CalendarCheck,
@@ -17,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WaitlistForm } from '@/components/marketing/WaitlistForm';
+import { MindBaseLogo } from '@/components/brand/MindBaseLogo';
 import { cn } from '@/lib/utils';
 
 export default function LandingPage() {
@@ -26,10 +26,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
         <nav className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/20">
-              <Brain className="h-4 w-4 text-primary" />
-            </div>
-            <span className="text-lg font-semibold tracking-tight">MindBase</span>
+            <MindBaseLogo size={32} variant="full" />
           </Link>
           <div className="flex items-center gap-3">
             <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground">
@@ -91,7 +88,7 @@ export default function LandingPage() {
                       <div className="h-2.5 w-2.5 rounded-full bg-emerald-500/60" />
                     </div>
                     <div className="ml-3 flex items-center gap-2">
-                      <Brain className="h-3.5 w-3.5 text-primary" />
+                      <MindBaseLogo size={18} />
                       <span className="text-xs font-medium text-muted-foreground">MindBase</span>
                     </div>
                   </div>
@@ -353,12 +350,7 @@ export default function LandingPage() {
       <footer className="border-t border-border/40 py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/20">
-                <Brain className="h-3.5 w-3.5 text-primary" />
-              </div>
-              <span className="text-sm font-semibold">MindBase</span>
-            </div>
+            <MindBaseLogo size={28} variant="full" />
             <p className="text-sm text-muted-foreground/60">
               Built with care for clarity
             </p>

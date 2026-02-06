@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Brain, Mail, KeyRound } from 'lucide-react';
+import { Mail, KeyRound } from 'lucide-react';
+import { MindBaseLogo } from '@/components/brand/MindBaseLogo';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -126,9 +127,7 @@ export default function SignupPage() {
       >
         {/* Logo */}
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/20">
-            <Brain className="h-6 w-6 text-primary" />
-          </div>
+          <MindBaseLogo size={48} />
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Create your account</h1>
             <p className="mt-1 text-sm text-muted-foreground">

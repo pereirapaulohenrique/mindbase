@@ -81,7 +81,7 @@ export function ItemCard({
       className={cn(
         'group relative rounded-xl border border-border/50 bg-card p-5 card-hover',
         item.is_completed && 'opacity-50',
-        justCompleted && 'border-emerald-500/30'
+        justCompleted && 'border-emerald-500/30 animate-completion-flash'
       )}
     >
       <div className="flex items-start gap-3">
@@ -108,7 +108,8 @@ export function ItemCard({
           <h3
             className={cn(
               'text-sm font-medium leading-relaxed text-foreground',
-              item.is_completed && 'completed-text'
+              item.is_completed && 'completed-text',
+              justCompleted && 'animate-strike'
             )}
           >
             {item.title}

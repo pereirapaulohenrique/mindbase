@@ -265,9 +265,9 @@
   --color-waiting: var(--destination-waiting);
   --color-trash: var(--destination-trash);
 
-  /* Fonts */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Fira Code', monospace;
+  /* Fonts - Geist (Vercel's premium typeface) */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'Fira Code', monospace;
 
   /* shadcn compatibility */
   --color-background: var(--background);
@@ -382,12 +382,52 @@ body {
 
 /* Checkmark completion animation */
 @keyframes check-bounce {
-  0% { transform: scale(0.8); }
-  50% { transform: scale(1.15); }
-  100% { transform: scale(1); }
+  0% { transform: scale(0.8); opacity: 0.5; }
+  40% { transform: scale(1.2); opacity: 1; }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
 }
 .animate-check {
-  animation: check-bounce 0.3s ease-out;
+  animation: check-bounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Completion flash - green ripple on item when checked */
+@keyframes completion-flash {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.08); }
+  100% { box-shadow: 0 0 0 12px rgba(52, 211, 153, 0); }
+}
+.animate-completion-flash {
+  animation: completion-flash 0.6s ease-out;
+}
+
+/* Item slide-out when moving between layers */
+@keyframes slide-out-right {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(20px); opacity: 0; }
+}
+.animate-slide-out {
+  animation: slide-out-right 0.25s ease-in forwards;
+}
+
+/* Item slide-in when appearing in new layer */
+@keyframes slide-in-left {
+  0% { transform: translateX(-20px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.animate-slide-in {
+  animation: slide-in-left 0.25s ease-out;
+}
+
+/* Strikethrough animation for completed text */
+@keyframes strike {
+  0% { text-decoration-color: transparent; }
+  100% { text-decoration-color: var(--text-muted); }
+}
+.animate-strike {
+  animation: strike 0.3s ease-out forwards;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
 }
 
 /* Glow effects for premium feel */
@@ -461,6 +501,39 @@ body {
   text-decoration-color: var(--text-muted);
   text-decoration-thickness: 1.5px;
   color: var(--text-muted);
+}
+
+/* =============================================================================
+   Light Mode Overrides for Premium Utilities
+============================================================================= */
+
+.light .gradient-mesh {
+  background-image:
+    radial-gradient(at 20% 20%, rgba(109, 76, 232, 0.06) 0px, transparent 60%),
+    radial-gradient(at 80% 40%, rgba(96, 165, 250, 0.04) 0px, transparent 60%),
+    radial-gradient(at 50% 80%, rgba(52, 211, 153, 0.03) 0px, transparent 60%);
+}
+
+.light .glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+
+.light .card-hover:hover {
+  border-color: var(--border-emphasis);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 0 1px var(--border-subtle);
+}
+
+.light .glow-primary {
+  box-shadow: 0 0 16px rgba(109, 76, 232, 0.12), 0 0 40px rgba(109, 76, 232, 0.04);
+}
+
+.light .capture-input:focus-within {
+  border-color: rgba(96, 165, 250, 0.35);
+  box-shadow:
+    0 0 0 3px rgba(96, 165, 250, 0.08),
+    0 4px 16px rgba(96, 165, 250, 0.05);
 }
 
 /* shadcn base layer */

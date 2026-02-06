@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -14,10 +15,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/lib/utils/dates';
+import { OnboardingFlow } from '@/components/onboarding/OnboardingFlow';
+import { createClient } from '@/lib/supabase/client';
 import type { Item, Profile } from '@/types/database';
 
 interface HomePageClientProps {
   profile: Profile | null;
+  showOnboarding?: boolean;
   stats: {
     inboxCount: number;
     processingCount: number;
@@ -34,15 +38,38 @@ interface HomePageClientProps {
 
 export function HomePageClient({
   profile,
+  showOnboarding = false,
   stats,
   todayItems,
   recentItems,
 }: HomePageClientProps) {
   const greeting = getGreeting();
   const userName = profile?.full_name?.split(' ')[0] || 'there';
+  const [onboardingVisible, setOnboardingVisible] = useState(showOnboarding);
+
+  const handleOnboardingComplete = async () => {
+    setOnboardingVisible(false);
+    // Mark onboarding as completed in the database
+    try {
+      const supabase = createClient();
+      await supabase
+        .from('profiles')
+        .update({ onboarding_completed: true })
+        .eq('id', profile?.id);
+    } catch (e) {
+      // Silently fail - not critical
+    }
+  };
 
   return (
     <div className="flex h-full flex-col overflow-auto">
+      {/* Onboarding overlay for first-time users */}
+      {onboardingVisible && (
+        <OnboardingFlow
+          userName={userName}
+          onComplete={handleOnboardingComplete}
+        />
+      )}
       {/* Page header - Bigger, more presence */}
       <div className="border-b border-border/50 px-8 py-8">
         <motion.div

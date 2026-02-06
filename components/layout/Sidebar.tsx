@@ -24,10 +24,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Brain,
   type LucideIcon,
 } from 'lucide-react';
 import { ICON_MAP, COLOR_PALETTE } from '@/components/icons';
+import { MindBaseLogo } from '@/components/brand/MindBaseLogo';
 
 // Navigation items with Lucide icons
 const mainNav: { href: string; label: string; icon: LucideIcon; shortcut: string }[] = [
@@ -76,9 +76,7 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
         {/* Header */}
         <div className="flex h-16 items-center justify-between px-4">
           <Link href="/home" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/20">
-              <Brain className="h-4.5 w-4.5 text-primary" />
-            </div>
+            <MindBaseLogo size={32} />
             <AnimatePresence>
               {!sidebarCollapsed && (
                 <motion.span
