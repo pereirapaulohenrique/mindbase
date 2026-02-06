@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OffMind — Main Screen Concepts</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Warm palette inspired by Nodal */
+      --bg-base: #080806;
+      --bg-surface: #0e0e0a;
+      --bg-elevated: #161610;
+      --bg-hover: #1e1e16;
+      --bg-active: #2a2a1e;
+
+      --border-subtle: #1a1a12;
+      --border-default: #2a2a1e;
+      --border-emphasis: #3a3a28;
+
+      --text-primary: #f0ede4;
+      --text-secondary: #9d9a8b;
+      --text-muted: #6b6958;
+      --text-disabled: #4a4838;
+
+      /* Warm amber accent */
+      --accent: #f59e0b;
+      --accent-hover: #fbbf24;
+      --accent-dim: #b47708;
+      --accent-subtle: rgba(245, 158, 11, 0.08);
+      --accent-glow: rgba(245, 158, 11, 0.15);
+      --accent-glow-strong: rgba(245, 158, 11, 0.3);
+
+      /* Layer colors (converged, muted) */
+      --capture: #64748b;    /* cool gray — unprocessed = neutral */
+      --commit: #22c55e;     /* green — done, safe */
+      --commit-glow: rgba(34, 197, 94, 0.12);
+
+      /* Atmospheric */
+      --teal-atmo: rgba(13, 148, 136, 0.06);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ===== NAV ===== */
+    .nav-tabs {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 20px 20px 0;
+      background: linear-gradient(to bottom, var(--bg-base) 60%, transparent);
+    }
+    .nav-tab {
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+    }
+    .nav-tab:hover { color: var(--text-secondary); }
+    .nav-tab.active {
+      color: var(--accent);
+      border-color: var(--border-default);
+      border-bottom-color: var(--bg-base);
+      background: var(--bg-surface);
+    }
+    .nav-tab .badge {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 4px;
+      background: var(--accent-subtle);
+      color: var(--accent);
+    }
+
+    /* ===== MOCKUP FRAME ===== */
+    .concepts { padding: 0 20px 40px; }
+    .concept {
+      display: none;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .concept.active { display: block; }
+    .concept-label {
+      text-align: center;
+      padding: 32px 0 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+    .concept-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+    .concept-subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .mockup-frame {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      height: 680px;
+      margin: 0 auto;
+      border-radius: 16px;
+      border: 1px solid var(--border-default);
+      background: var(--bg-base);
+      overflow: hidden;
+    }
+
+    /* ===== SHARED: SIDEBAR ===== */
+    .sidebar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 56px;
+      border-right: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+      gap: 4px;
+    }
+    .sidebar .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #8b5cf6, #22d3ee);
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .sidebar .logo::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 5px;
+      width: 18px;
+      height: 2px;
+      background: #22d3ee;
+      border-radius: 1px;
+      opacity: 0.6;
+    }
+    .sidebar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      cursor: pointer;
+      position: relative;
+    }
+    .sidebar-icon:hover { color: var(--text-secondary); background: var(--bg-hover); }
+    .sidebar-icon.active {
+      color: var(--accent);
+      background: var(--accent-subtle);
+    }
+    .sidebar-icon.active::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 0 2px 2px 0;
+    }
+    .sidebar-icon svg { width: 18px; height: 18px; }
+    .sidebar-spacer { flex: 1; }
+    .sidebar-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow-strong);
+    }
+
+    /* ===== SHARED: CAPTURE BAR ===== */
+    .capture-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid var(--border-default);
+      background: var(--bg-elevated);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 10px;
+      z-index: 10;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    .capture-bar:hover {
+      border-color: var(--accent-dim);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow);
+    }
+    .capture-bar .icon { color: var(--text-muted); }
+    .capture-bar .placeholder {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .capture-bar .kbd {
+      padding: 2px 8px;
+      font-size: 11px;
+      color: var(--text-disabled);
+      background: var(--bg-hover);
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+    }
+
+    /* ===== SHARED: ATMOSPHERIC BG ===== */
+    .atmosphere {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .atmosphere::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 60%;
+      height: 60%;
+      background: radial-gradient(ellipse, var(--teal-atmo) 0%, transparent 70%);
+    }
+    .atmosphere::after {
+      content: '';
+      position: absolute;
+      bottom: -10%;
+      left: -10%;
+      width: 50%;
+      height: 50%;
+      background: radial-gradient(ellipse, rgba(245, 158, 11, 0.03) 0%, transparent 70%);
+    }
+
+    /* ===== CONCEPT 1: THE SURFACE ===== */
+    .surface-content {
+      position: absolute;
+      left: 56px;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 80px;
+    }
+    .surface-greeting {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+    .surface-card {
+      width: 480px;
+      padding: 32px;
+      border-radius: 16px;
+      border: 1px solid var(--border-default);
+      background: var(--bg-surface);
+      position: relative;
+    }
+    .surface-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 16px;
+      padding: 1px;
+      background: linear-gradient(135deg, var(--accent-glow), transparent 50%);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      pointer-events: none;
+    }
+    .surface-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .surface-card-label .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow-strong);
+    }
+    .surface-card-title {
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+    .surface-card-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+    }
+    .surface-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .btn-warm {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-warm.primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    .btn-warm.ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-default);
+    }
+    .surface-remaining {
+      margin-top: 32px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .surface-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .surface-dots .d {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border-emphasis);
+    }
+    .surface-dots .d.active {
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow-strong);
+    }
+    .surface-dots .d.done {
+      background: var(--commit);
+      box-shadow: 0 0 6px var(--commit-glow);
+    }
+
+    /* ===== CONCEPT 2: THE FLOW ===== */
+    .flow-content {
+      position: absolute;
+      left: 56px;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+    .flow-column {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 420px;
+      top: 0;
+      bottom: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+    }
+    .flow-zone-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+      padding: 8px 0;
+    }
+    .flow-zone-label.capture { color: var(--capture); }
+    .flow-zone-label.commit { color: var(--accent); }
+    .flow-separator {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-default), transparent);
+      margin: 4px 0;
+    }
+    .flow-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .flow-item:hover {
+      border-color: var(--border-default);
+      background: var(--bg-elevated);
+    }
+    .flow-item.unprocessed {
+      opacity: 0.5;
+      border-style: dashed;
+    }
+    .flow-item.committed {
+      border-color: var(--accent-dim);
+      background: var(--accent-subtle);
+    }
+    .flow-item.committed:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .flow-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-emphasis);
+      flex-shrink: 0;
+    }
+    .flow-item.committed .flow-check { border-color: var(--accent-dim); }
+    .flow-item.done .flow-check {
+      border-color: var(--commit);
+      background: var(--commit);
+    }
+    .flow-item.done .flow-check::after {
+      content: '✓';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #000;
+      width: 100%;
+      height: 100%;
+    }
+    .flow-item.done {
+      opacity: 0.4;
+      text-decoration: line-through;
+      text-decoration-color: var(--text-muted);
+    }
+    .flow-text {
+      flex: 1;
+      font-size: 13px;
+    }
+    .flow-hint {
+      font-size: 11px;
+      color: var(--text-disabled);
+    }
+    .flow-arrow {
+      text-align: center;
+      color: var(--text-disabled);
+      font-size: 16px;
+      padding: 2px 0;
+    }
+
+    /* ===== CONCEPT 3: THE DESK ===== */
+    .desk-content {
+      position: absolute;
+      left: 56px;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+    .desk-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto 1fr auto;
+      gap: 16px;
+      padding: 24px;
+      height: calc(100% - 80px);
+    }
+    .desk-today {
+      grid-column: 1 / 3;
+      grid-row: 1 / 3;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border-default);
+      background: var(--bg-surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .desk-today::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top left, var(--accent-glow) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .desk-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .desk-section-title .count {
+      color: var(--accent);
+      margin-left: 8px;
+    }
+    .desk-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      transition: background 0.15s;
+      cursor: pointer;
+      position: relative;
+    }
+    .desk-item:hover { background: var(--bg-hover); }
+    .desk-item .check {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-emphasis);
+      flex-shrink: 0;
+    }
+    .desk-item.focus-item {
+      background: var(--accent-subtle);
+      border-radius: 10px;
+    }
+    .desk-item.focus-item .check { border-color: var(--accent-dim); }
+    .desk-item.focus-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 3px;
+      border-radius: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow-strong);
+    }
+    .desk-item .title { font-size: 13px; flex: 1; }
+    .desk-item .time {
+      font-size: 11px;
+      color: var(--text-disabled);
+    }
+    .desk-item .tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--bg-hover);
+      color: var(--text-muted);
+    }
+
+    .desk-inbox {
+      grid-column: 3;
+      grid-row: 1;
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px dashed var(--border-default);
+      background: var(--bg-surface);
+    }
+    .desk-inbox .desk-section-title { color: var(--capture); }
+    .desk-inbox-item {
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-radius: 6px;
+      margin-bottom: 4px;
+      border: 1px dashed var(--border-subtle);
+      opacity: 0.6;
+      cursor: pointer;
+    }
+    .desk-inbox-item:hover { opacity: 1; border-color: var(--border-default); }
+
+    .desk-spaces {
+      grid-column: 3;
+      grid-row: 2;
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+    }
+    .desk-space {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-radius: 6px;
+      margin-bottom: 2px;
+      cursor: pointer;
+    }
+    .desk-space:hover { color: var(--text-secondary); background: var(--bg-hover); }
+    .desk-space .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ===== CONCEPT 4: THE HORIZON ===== */
+    .horizon-content {
+      position: absolute;
+      left: 56px;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .horizon-header {
+      padding: 20px 32px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    .horizon-date { color: var(--text-secondary); font-weight: 500; }
+    .horizon-track {
+      flex: 1;
+      position: relative;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+    }
+    .horizon-line {
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      height: 2px;
+      background: linear-gradient(to right,
+        var(--text-disabled) 0%,
+        var(--accent) 35%,
+        var(--accent) 40%,
+        var(--border-emphasis) 60%,
+        var(--border-subtle) 100%
+      );
+      top: 50%;
+    }
+    .horizon-now {
+      position: absolute;
+      left: 38%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow-strong), 0 0 40px var(--accent-glow);
+      z-index: 5;
+    }
+    .horizon-now::after {
+      content: 'NOW';
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+    .horizon-items {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .horizon-item {
+      position: absolute;
+      top: 50%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-default);
+      background: var(--bg-surface);
+      font-size: 12px;
+      max-width: 180px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .horizon-item:hover {
+      border-color: var(--border-emphasis);
+      background: var(--bg-elevated);
+    }
+    .horizon-item .h-title { font-weight: 500; margin-bottom: 4px; }
+    .horizon-item .h-time { font-size: 10px; color: var(--text-muted); }
+
+    /* Done items (past) */
+    .horizon-item.past {
+      opacity: 0.3;
+      transform: translateY(-50%);
+    }
+    /* Current */
+    .horizon-item.current {
+      border-color: var(--accent);
+      background: var(--accent-subtle);
+      box-shadow: 0 0 20px var(--accent-glow);
+      transform: translateY(-120%);
+    }
+    .horizon-item.current .h-title { color: var(--accent-hover); }
+    /* Future */
+    .horizon-item.future {
+      transform: translateY(-50%);
+      opacity: 0.7;
+    }
+    .horizon-item.far-future {
+      transform: translateY(20%);
+      opacity: 0.35;
+      border-style: dashed;
+    }
+
+    /* ===== CONCEPT SELECTOR ===== */
+    .info-bar {
+      max-width: 1100px;
+      margin: 24px auto 0;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .info-bar strong { color: var(--accent); font-weight: 600; }
+    .info-bar em { color: var(--text-primary); font-style: normal; font-weight: 500; }
+
+    /* SVGs for sidebar icons */
+    .icon-svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs" id="tabs">
+    <div class="nav-tab active" data-concept="surface">The Surface <span class="badge">Recommended</span></div>
+    <div class="nav-tab" data-concept="flow">The Flow</div>
+    <div class="nav-tab" data-concept="desk">The Desk</div>
+    <div class="nav-tab" data-concept="horizon">The Horizon</div>
+  </div>
+
+  <div class="concepts">
+
+    <!-- ===== CONCEPT 1: THE SURFACE ===== -->
+    <div class="concept active" id="surface">
+      <div class="concept-label">Concept 1</div>
+      <div class="concept-title">The Surface</div>
+      <div class="concept-subtitle">One thing at a time. Full presence. The app shows you what matters right now — nothing else.</div>
+
+      <div class="mockup-frame">
+        <div class="atmosphere"></div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <div class="logo"></div>
+          <div class="sidebar-icon active">
+            <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="sidebar-icon">
+            <svg viewBox="0 0 24 24" class="icon-svg"><polyline points="22 12 16 12 14 15 10 9 8 12 2 12"/></svg>
+            <div class="sidebar-badge"></div>
+          </div>
+          <div class="sidebar-icon">
+            <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="sidebar-icon">
+            <svg viewBox="0 0 24 24" class="icon-svg"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="sidebar-spacer"></div>
+          <div class="sidebar-icon">
+            <svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+        </div>
+
+        <!-- Surface content -->
+        <div class="surface-content">
+          <div class="surface-greeting">Thursday, February 6 — Good afternoon, Paulo</div>
+
+          <div class="surface-card">
+            <div class="surface-card-label">
+              <span class="dot"></span>
+              Up Next
+            </div>
+            <div class="surface-card-title">Review OffMind design mockups and pick a direction</div>
+            <div class="surface-card-meta">
+              <span>Work — OffMind</span>
+              <span>Scheduled for today</span>
+            </div>
+            <div class="surface-card-actions">
+              <button class="btn-warm primary">Complete</button>
+              <button class="btn-warm ghost">Skip</button>
+              <button class="btn-warm ghost">→ Later</button>
+            </div>
+          </div>
+
+          <div class="surface-remaining">
+            <div class="surface-dots">
+              <div class="d done"></div>
+              <div class="d done"></div>
+              <div class="d active"></div>
+              <div class="d"></div>
+              <div class="d"></div>
+            </div>
+            <span>3 of 5 remaining today</span>
+          </div>
+        </div>
+
+        <!-- Capture bar -->
+        <div class="capture-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span class="placeholder">Capture a thought...</span>
+          <span class="kbd">⌘ K</span>
+        </div>
+      </div>
+
+      <div class="info-bar">
+        <strong>Why this works:</strong> It IS the product philosophy. If the point is to get things <em>off</em> your mind, the app should only surface <em>one thing at a time</em>. Background softly shifts as you complete items. The floating capture bar is always accessible — type a thought, hit enter, keep going.
+      </div>
+    </div>
+
+    <!-- ===== CONCEPT 2: THE FLOW ===== -->
+    <div class="concept" id="flow">
+      <div class="concept-label">Concept 2</div>
+      <div class="concept-title">The Flow</div>
+      <div class="concept-subtitle">A vertical stream. Unprocessed thoughts flow in at top, committed items anchor at bottom. The GTD flow made visible.</div>
+
+      <div class="mockup-frame">
+        <div class="atmosphere"></div>
+
+        <div class="sidebar">
+          <div class="logo"></div>
+          <div class="sidebar-icon active">
+            <svg viewBox="0 0 24 24" class="icon-svg"><polyline points="22 12 16 12 14 15 10 9 8 12 2 12"/></svg>
+          </div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="12" r="10"/></svg></div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="sidebar-spacer"></div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg></div>
+        </div>
+
+        <div class="flow-content">
+          <div class="flow-column">
+            <div class="flow-zone-label capture">Inbox — 3 unprocessed</div>
+
+            <div class="flow-item unprocessed">
+              <div class="flow-check"></div>
+              <span class="flow-text">Check if offmind.ai DNS propagated</span>
+              <span class="flow-hint">tap to process →</span>
+            </div>
+            <div class="flow-item unprocessed">
+              <div class="flow-check"></div>
+              <span class="flow-text">Look into Tauri vs Electron bundle size</span>
+              <span class="flow-hint">tap to process →</span>
+            </div>
+            <div class="flow-item unprocessed">
+              <div class="flow-check"></div>
+              <span class="flow-text">Mom's birthday next Friday</span>
+              <span class="flow-hint">tap to process →</span>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+            <div class="flow-separator"></div>
+            <div class="flow-zone-label commit">Today's Commitments</div>
+
+            <div class="flow-item done">
+              <div class="flow-check"></div>
+              <span class="flow-text">Morning standup notes</span>
+            </div>
+            <div class="flow-item done">
+              <div class="flow-check"></div>
+              <span class="flow-text">Push logo changes to main</span>
+            </div>
+            <div class="flow-item committed">
+              <div class="flow-check"></div>
+              <span class="flow-text" style="color: var(--accent-hover)">Review OffMind design mockups</span>
+            </div>
+            <div class="flow-item committed">
+              <div class="flow-check"></div>
+              <span class="flow-text">Write landing page copy for offmind.ai</span>
+            </div>
+            <div class="flow-item committed">
+              <div class="flow-check"></div>
+              <span class="flow-text">Grocery run</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="capture-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span class="placeholder">Capture a thought...</span>
+          <span class="kbd">⌘ K</span>
+        </div>
+      </div>
+
+      <div class="info-bar">
+        <strong>Why this works:</strong> The Capture→Process→Commit flow is <em>visible and spatial</em>. Unprocessed items are faded and dashed (unfinished), committed items glow warm amber. You can literally see thoughts flowing from chaos (top) to clarity (bottom). Processing is a swipe-right on any inbox item.
+      </div>
+    </div>
+
+    <!-- ===== CONCEPT 3: THE DESK ===== -->
+    <div class="concept" id="desk">
+      <div class="concept-label">Concept 3</div>
+      <div class="concept-title">The Desk</div>
+      <div class="concept-subtitle">A spatial canvas. Today's work front-and-center, inbox and spaces on the periphery. Like opening your actual desk.</div>
+
+      <div class="mockup-frame">
+        <div class="atmosphere"></div>
+
+        <div class="sidebar">
+          <div class="logo"></div>
+          <div class="sidebar-icon active"><svg viewBox="0 0 24 24" class="icon-svg"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><polyline points="22 12 16 12 14 15 10 9 8 12 2 12"/></svg></div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="sidebar-spacer"></div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg></div>
+        </div>
+
+        <div class="desk-content">
+          <div class="desk-grid">
+            <!-- Main: Today -->
+            <div class="desk-today">
+              <div class="desk-section-title">Today <span class="count">5 items</span></div>
+              <div class="desk-item focus-item">
+                <div class="check"></div>
+                <span class="title">Review OffMind design mockups</span>
+                <span class="tag">OffMind</span>
+              </div>
+              <div class="desk-item">
+                <div class="check"></div>
+                <span class="title">Write landing page copy for offmind.ai</span>
+                <span class="time">2:00 PM</span>
+              </div>
+              <div class="desk-item">
+                <div class="check"></div>
+                <span class="title">Grocery run</span>
+                <span class="tag">Personal</span>
+              </div>
+              <div class="desk-item" style="opacity: 0.4; text-decoration: line-through;">
+                <div class="check" style="background: var(--commit); border-color: var(--commit);"></div>
+                <span class="title">Morning standup notes</span>
+              </div>
+              <div class="desk-item" style="opacity: 0.4; text-decoration: line-through;">
+                <div class="check" style="background: var(--commit); border-color: var(--commit);"></div>
+                <span class="title">Push logo changes to main</span>
+              </div>
+            </div>
+
+            <!-- Inbox -->
+            <div class="desk-inbox">
+              <div class="desk-section-title">Inbox <span class="count" style="color: var(--capture);">3</span></div>
+              <div class="desk-inbox-item">Check DNS propagation</div>
+              <div class="desk-inbox-item">Tauri vs Electron research</div>
+              <div class="desk-inbox-item">Mom's birthday planning</div>
+            </div>
+
+            <!-- Spaces -->
+            <div class="desk-spaces">
+              <div class="desk-section-title">Spaces</div>
+              <div class="desk-space"><div class="dot" style="background: var(--accent);"></div> Work</div>
+              <div class="desk-space"><div class="dot" style="background: #22d3ee;"></div> OffMind</div>
+              <div class="desk-space"><div class="dot" style="background: #a78bfa;"></div> Personal</div>
+              <div class="desk-space"><div class="dot" style="background: #f472b6;"></div> Health</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="capture-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span class="placeholder">Capture a thought...</span>
+          <span class="kbd">⌘ K</span>
+        </div>
+      </div>
+
+      <div class="info-bar">
+        <strong>Why this works:</strong> Spatial layout gives you context without overwhelm. Today dominates the view (2/3 of screen), inbox is a small <em>peripheral awareness</em>, spaces are soft reference. The "focus item" (amber left border + glow) tells you what to do <em>right now</em> without hiding the rest.
+      </div>
+    </div>
+
+    <!-- ===== CONCEPT 4: THE HORIZON ===== -->
+    <div class="concept" id="horizon">
+      <div class="concept-label">Concept 4</div>
+      <div class="concept-title">The Horizon</div>
+      <div class="concept-subtitle">Time moves forward. Completed items fade behind you. Only "now" is sharp. The future is soft and distant.</div>
+
+      <div class="mockup-frame">
+        <div class="atmosphere"></div>
+
+        <div class="sidebar">
+          <div class="logo"></div>
+          <div class="sidebar-icon active"><svg viewBox="0 0 24 24" class="icon-svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><polyline points="22 12 16 12 14 15 10 9 8 12 2 12"/></svg></div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div class="sidebar-spacer"></div>
+          <div class="sidebar-icon"><svg viewBox="0 0 24 24" class="icon-svg"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg></div>
+        </div>
+
+        <div class="horizon-content">
+          <div class="horizon-header">
+            <span class="horizon-date">Thursday, February 6, 2026</span>
+            <span>2 done — 3 remaining</span>
+          </div>
+
+          <div class="horizon-track">
+            <div class="horizon-line"></div>
+            <div class="horizon-now"></div>
+
+            <div class="horizon-items">
+              <!-- Past items -->
+              <div class="horizon-item past" style="left: 8%; top: 35%;">
+                <div class="h-title" style="text-decoration: line-through; color: var(--text-disabled);">Morning standup</div>
+                <div class="h-time">9:00 AM ✓</div>
+              </div>
+              <div class="horizon-item past" style="left: 20%; top: 55%;">
+                <div class="h-title" style="text-decoration: line-through; color: var(--text-disabled);">Push logo changes</div>
+                <div class="h-time">10:30 AM ✓</div>
+              </div>
+
+              <!-- Current item -->
+              <div class="horizon-item current" style="left: 35%;">
+                <div class="h-title">Review design mockups</div>
+                <div class="h-time">Now</div>
+              </div>
+
+              <!-- Future items -->
+              <div class="horizon-item future" style="left: 55%; top: 30%;">
+                <div class="h-title">Write landing page copy</div>
+                <div class="h-time">2:00 PM</div>
+              </div>
+              <div class="horizon-item future" style="left: 70%; top: 60%;">
+                <div class="h-title">Grocery run</div>
+                <div class="h-time">Evening</div>
+              </div>
+
+              <!-- Far future -->
+              <div class="horizon-item far-future" style="left: 85%; top: 40%;">
+                <div class="h-title">Tomorrow...</div>
+                <div class="h-time">3 items</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="capture-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span class="placeholder">Capture a thought...</span>
+          <span class="kbd">⌘ K</span>
+        </div>
+      </div>
+
+      <div class="info-bar">
+        <strong>Why this works:</strong> Time is the one axis everyone understands. The past fades, the present glows, the future is soft. You see <em>movement through your day</em> rather than a static list. The "NOW" marker is a gentle anchor — you always know where you are. Tomorrow and beyond dissolve into shapes, keeping focus on today.
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.nav-tab');
+    const concepts = document.querySelectorAll('.concept');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        concepts.forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.concept).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
