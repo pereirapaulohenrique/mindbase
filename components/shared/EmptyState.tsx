@@ -22,11 +22,11 @@ interface EmptyStateProps {
   variant?: EmptyStateVariant;
 }
 
-const variantStyles: Record<EmptyStateVariant, string> = {
-  capture: 'text-blue-500',
-  process: 'text-amber-500',
-  commit: 'text-green-500',
-  default: 'text-muted-foreground',
+const variantStyles: Record<EmptyStateVariant, { text: string; bg: string }> = {
+  capture: { text: 'text-blue-400', bg: 'bg-blue-500/10' },
+  process: { text: 'text-amber-400', bg: 'bg-amber-500/10' },
+  commit: { text: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  default: { text: 'text-muted-foreground', bg: 'bg-muted/50' },
 };
 
 export function EmptyState({
@@ -38,35 +38,37 @@ export function EmptyState({
   variant = 'default',
 }: EmptyStateProps) {
   const Icon = icon || (iconName ? ICON_MAP[iconName] : null) || FolderOpen;
-  const iconColorClass = variantStyles[variant];
+  const styles = variantStyles[variant];
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="flex flex-col items-center justify-center py-12 px-4 text-center"
+      transition={{ duration: 0.25 }}
+      className="flex flex-col items-center justify-center py-16 px-4 text-center"
     >
-      <div className={cn('mb-4 opacity-60', iconColorClass)}>
-        <Icon size={48} strokeWidth={1.5} />
+      <div className={cn('flex h-14 w-14 items-center justify-center rounded-2xl mb-5', styles.bg)}>
+        <Icon className={cn('h-6 w-6', styles.text)} strokeWidth={1.5} />
       </div>
 
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      <h3 className="text-base font-semibold mb-1.5">{title}</h3>
 
-      <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+      <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
         {description}
       </p>
 
       {action && (
-        <>
+        <div className="mt-6">
           {action.href ? (
-            <Button asChild>
+            <Button asChild size="sm" variant="outline" className="h-8 text-xs">
               <Link href={action.href}>{action.label}</Link>
             </Button>
           ) : (
-            <Button onClick={action.onClick}>{action.label}</Button>
+            <Button onClick={action.onClick} size="sm" variant="outline" className="h-8 text-xs">
+              {action.label}
+            </Button>
           )}
-        </>
+        </div>
       )}
     </motion.div>
   );
@@ -78,7 +80,7 @@ export function EmptyInbox() {
     <EmptyState
       icon={Inbox}
       title="Inbox zero!"
-      description="Your mind is clear"
+      description="Your mind is clear. Capture something new when inspiration strikes."
       variant="capture"
     />
   );
@@ -89,7 +91,7 @@ export function EmptyProcess() {
     <EmptyState
       icon={ArrowRightLeft}
       title="Nothing to organize"
-      description="All items have been processed"
+      description="All items have been processed. Nice work keeping things tidy."
       variant="process"
     />
   );
@@ -100,7 +102,7 @@ export function EmptyCommit() {
     <EmptyState
       icon={CalendarCheck}
       title="No commitments today"
-      description="Your schedule is clear"
+      description="Your schedule is clear. A perfect day to focus on what matters."
       variant="commit"
     />
   );
@@ -111,7 +113,7 @@ export function EmptySearch() {
     <EmptyState
       icon={Search}
       title="No results found"
-      description="Try adjusting your search terms"
+      description="Try adjusting your search terms or filters."
       variant="default"
     />
   );
@@ -122,7 +124,7 @@ export function EmptySpace() {
     <EmptyState
       icon={FolderOpen}
       title="No items in this space"
-      description="Create your first item to get started"
+      description="Create your first item to get started."
       variant="default"
     />
   );
@@ -133,7 +135,7 @@ export function EmptyProject() {
     <EmptyState
       icon={Briefcase}
       title="No items in this project"
-      description="Add tasks or notes to organize your work"
+      description="Add tasks or notes to organize your work."
       variant="default"
     />
   );

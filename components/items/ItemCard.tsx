@@ -10,6 +10,7 @@ import {
   Trash2,
   Calendar,
   Inbox,
+  Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/lib/utils/dates';
@@ -56,10 +57,15 @@ export function ItemCard({
   showAIButton = false,
   compact = false,
 }: ItemCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [justCompleted, setJustCompleted] = useState(false);
 
   const handleComplete = async () => {
     if (onUpdate) {
+      const completing = !item.is_completed;
+      if (completing) {
+        setJustCompleted(true);
+        setTimeout(() => setJustCompleted(false), 600);
+      }
       onUpdate(item.id, {
         is_completed: !item.is_completed,
         completed_at: item.is_completed ? null : new Date().toISOString(),
@@ -71,24 +77,26 @@ export function ItemCard({
   const DestIcon = destination?.icon ? ICON_MAP[destination.icon] || Inbox : null;
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+    <div
       className={cn(
-        'group relative rounded-lg border border-border bg-card p-4 transition-colors hover:border-border-emphasis',
-        item.is_completed && 'opacity-60'
+        'group relative rounded-xl border border-border/50 bg-card p-5 card-hover',
+        item.is_completed && 'opacity-50',
+        justCompleted && 'border-emerald-500/30'
       )}
     >
       <div className="flex items-start gap-3">
         {/* Checkbox */}
         <div className="pt-0.5">
-          <Checkbox
-            checked={item.is_completed}
-            onCheckedChange={handleComplete}
-            className="h-5 w-5"
-          />
+          <div className={cn(justCompleted && 'animate-check')}>
+            <Checkbox
+              checked={item.is_completed}
+              onCheckedChange={handleComplete}
+              className={cn(
+                'h-[18px] w-[18px] rounded-full transition-colors',
+                item.is_completed && 'border-emerald-500 bg-emerald-500 text-white data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500'
+              )}
+            />
+          </div>
         </div>
 
         {/* Content */}
@@ -99,8 +107,8 @@ export function ItemCard({
           {/* Title */}
           <h3
             className={cn(
-              'text-sm font-medium text-foreground',
-              item.is_completed && 'line-through text-muted-foreground'
+              'text-sm font-medium leading-relaxed text-foreground',
+              item.is_completed && 'completed-text'
             )}
           >
             {item.title}
@@ -108,19 +116,19 @@ export function ItemCard({
 
           {/* Notes preview */}
           {!compact && item.notes && (
-            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground line-clamp-2">
               {item.notes}
             </p>
           )}
 
           {/* Meta row */}
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             {/* Destination badge */}
             {destination && (
               <span
-                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5"
+                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium"
                 style={{
-                  backgroundColor: `var(--destination-${destination.slug})20`,
+                  backgroundColor: `var(--destination-${destination.slug})15`,
                   color: `var(--destination-${destination.slug})`,
                 }}
               >
@@ -139,7 +147,7 @@ export function ItemCard({
 
             {/* Separator */}
             {(destination || item.scheduled_at) && (
-              <span className="text-border">•</span>
+              <span className="text-border">·</span>
             )}
 
             {/* Created time */}
@@ -148,7 +156,7 @@ export function ItemCard({
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           {/* AI Suggest button - Always visible when enabled */}
           {showAIButton && onAISuggest && (
             <TooltipProvider>
@@ -180,12 +188,9 @@ export function ItemCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={cn(
-                    'h-8 w-8 transition-opacity',
-                    !isHovered && 'opacity-0 group-hover:opacity-100'
-                  )}
+                  className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -211,12 +216,9 @@ export function ItemCard({
               <Button
                 variant="ghost"
                 size="icon"
-                className={cn(
-                  'h-8 w-8 transition-opacity',
-                  !isHovered && 'opacity-0 group-hover:opacity-100'
-                )}
+                className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
               >
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="h-3.5 w-3.5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -236,6 +238,6 @@ export function ItemCard({
           </DropdownMenu>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

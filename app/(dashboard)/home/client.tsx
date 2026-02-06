@@ -7,12 +7,9 @@ import {
   ArrowRightLeft,
   CalendarCheck,
   CheckCircle2,
-  TrendingUp,
-  FolderOpen,
   Clock,
-  Sparkles,
-  Plus,
   ChevronRight,
+  Flame,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -41,89 +38,85 @@ export function HomePageClient({
   todayItems,
   recentItems,
 }: HomePageClientProps) {
-  const completionRate = stats.totalItems > 0
-    ? Math.round((stats.totalCompleted / stats.totalItems) * 100)
-    : 0;
-
   const greeting = getGreeting();
   const userName = profile?.full_name?.split(' ')[0] || 'there';
 
   return (
     <div className="flex h-full flex-col overflow-auto">
-      {/* Page header */}
-      <div className="border-b border-border px-6 py-6">
+      {/* Page header - Bigger, more presence */}
+      <div className="border-b border-border/50 px-8 py-8">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.25 }}
         >
-          <h1 className="text-2xl font-semibold text-foreground">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             {greeting}, {userName}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground">
             Here's what's on your mind today
           </p>
         </motion.div>
       </div>
 
-      <div className="flex-1 p-6">
-        <div className="mx-auto max-w-5xl space-y-8">
-          {/* Three-Layer Flow */}
+      <div className="flex-1 p-8">
+        <div className="mx-auto max-w-5xl space-y-10">
+          {/* Three-Layer Flow - The signature visual */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="grid gap-3 sm:grid-cols-3"
+            transition={{ duration: 0.3, delay: 0.05 }}
+            className="grid gap-4 sm:grid-cols-3"
           >
             <Link href="/capture" className="group">
-              <div className="rounded-xl border border-blue-500/20 bg-blue-500/[0.04] p-5 transition-all hover:border-blue-500/40 hover:bg-blue-500/[0.08]">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/15">
-                    <Inbox className="h-5 w-5 text-blue-500" />
+              <div className="relative overflow-hidden rounded-xl border border-blue-500/15 bg-blue-500/[0.03] p-6 transition-all duration-200 hover:border-blue-500/30 hover:bg-blue-500/[0.06]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10">
+                    <Inbox className="h-5 w-5 text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-wider text-blue-500/70">Capture</p>
-                    <p className="text-2xl font-bold text-foreground">{stats.inboxCount}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-400/70">Capture</p>
+                    <p className="text-2xl font-bold tracking-tight text-foreground">{stats.inboxCount}</p>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground">items in inbox</p>
-                <div className="mt-3 flex items-center gap-1 text-xs text-blue-500/60 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="mt-3 flex items-center gap-1 text-xs text-blue-400/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                   <span>Open inbox</span>
                   <ChevronRight className="h-3 w-3" />
                 </div>
               </div>
             </Link>
             <Link href="/process" className="group">
-              <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-5 transition-all hover:border-amber-500/40 hover:bg-amber-500/[0.08]">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/15">
-                    <ArrowRightLeft className="h-5 w-5 text-amber-500" />
+              <div className="relative overflow-hidden rounded-xl border border-amber-500/15 bg-amber-500/[0.03] p-6 transition-all duration-200 hover:border-amber-500/30 hover:bg-amber-500/[0.06]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10">
+                    <ArrowRightLeft className="h-5 w-5 text-amber-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-wider text-amber-500/70">Process</p>
-                    <p className="text-2xl font-bold text-foreground">{stats.processingCount}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-400/70">Process</p>
+                    <p className="text-2xl font-bold tracking-tight text-foreground">{stats.processingCount}</p>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground">items to organize</p>
-                <div className="mt-3 flex items-center gap-1 text-xs text-amber-500/60 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="mt-3 flex items-center gap-1 text-xs text-amber-400/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                   <span>Start processing</span>
                   <ChevronRight className="h-3 w-3" />
                 </div>
               </div>
             </Link>
             <Link href="/commit" className="group">
-              <div className="rounded-xl border border-green-500/20 bg-green-500/[0.04] p-5 transition-all hover:border-green-500/40 hover:bg-green-500/[0.08]">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/15">
-                    <CalendarCheck className="h-5 w-5 text-green-500" />
+              <div className="relative overflow-hidden rounded-xl border border-emerald-500/15 bg-emerald-500/[0.03] p-6 transition-all duration-200 hover:border-emerald-500/30 hover:bg-emerald-500/[0.06]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10">
+                    <CalendarCheck className="h-5 w-5 text-emerald-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-wider text-green-500/70">Commit</p>
-                    <p className="text-2xl font-bold text-foreground">{stats.todayCount}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-400/70">Commit</p>
+                    <p className="text-2xl font-bold tracking-tight text-foreground">{stats.todayCount}</p>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground">today's commitments</p>
-                <div className="mt-3 flex items-center gap-1 text-xs text-green-500/60 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="mt-3 flex items-center gap-1 text-xs text-emerald-400/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                   <span>View schedule</span>
                   <ChevronRight className="h-3 w-3" />
                 </div>
@@ -134,47 +127,49 @@ export function HomePageClient({
           {/* Completed Today Badge */}
           {stats.completedTodayCount > 0 && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.15 }}
-              className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-2.5"
+              transition={{ duration: 0.2, delay: 0.1 }}
+              className="flex items-center gap-2.5 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/15 px-5 py-3"
             >
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+              <Flame className="h-4 w-4 text-emerald-400" />
+              <span className="text-sm font-medium text-emerald-400">
                 {stats.completedTodayCount} completed today
               </span>
             </motion.div>
           )}
 
-          {/* Main Content Grid */}
+          {/* Main Content - Two column, focused */}
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Today's Commitments */}
+            {/* Today's Commitments - Primary focus */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-              className="rounded-xl border border-border bg-card"
+              transition={{ duration: 0.25, delay: 0.1 }}
+              className="rounded-xl border border-border/50 bg-card"
             >
-              <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                <div className="flex items-center gap-2">
-                  <CalendarCheck className="h-5 w-5 text-green-500" />
-                  <h2 className="font-semibold">Today's Commitments</h2>
+              <div className="flex items-center justify-between border-b border-border/50 px-6 py-4">
+                <div className="flex items-center gap-2.5">
+                  <CalendarCheck className="h-4 w-4 text-emerald-400" />
+                  <h2 className="text-sm font-semibold">Today's Commitments</h2>
                 </div>
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground h-7 text-xs" asChild>
                   <Link href="/commit">
                     View all
-                    <ChevronRight className="ml-1 h-4 w-4" />
+                    <ChevronRight className="ml-0.5 h-3 w-3" />
                   </Link>
                 </Button>
               </div>
-              <div className="p-4">
+              <div className="p-5">
                 {todayItems.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <CalendarCheck className="h-10 w-10 text-muted-foreground/30" />
-                    <p className="mt-3 text-sm text-muted-foreground">
+                  <div className="flex flex-col items-center justify-center py-10 text-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50">
+                      <CalendarCheck className="h-5 w-5 text-muted-foreground/40" />
+                    </div>
+                    <p className="mt-4 text-sm text-muted-foreground">
                       No commitments for today
                     </p>
-                    <Button variant="outline" size="sm" className="mt-3" asChild>
+                    <Button variant="outline" size="sm" className="mt-4 h-8 text-xs" asChild>
                       <Link href="/process">
                         Schedule something
                       </Link>
@@ -185,15 +180,15 @@ export function HomePageClient({
                     {todayItems.map((item) => (
                       <li
                         key={item.id}
-                        className="flex items-center gap-3 rounded-lg border border-border bg-background p-3"
+                        className="flex items-center gap-3 rounded-lg border border-border/30 bg-background/50 p-3.5 transition-colors hover:border-border/60"
                       >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10">
-                          <Clock className="h-4 w-4 text-green-500" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/8">
+                          <Clock className="h-3.5 w-3.5 text-emerald-400" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{item.title}</p>
                           {item.scheduled_at && (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground mt-0.5">
                               {new Date(item.scheduled_at).toLocaleTimeString([], {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -210,31 +205,33 @@ export function HomePageClient({
 
             {/* Recent Captures */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
-              className="rounded-xl border border-border bg-card"
+              transition={{ duration: 0.25, delay: 0.15 }}
+              className="rounded-xl border border-border/50 bg-card"
             >
-              <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                <div className="flex items-center gap-2">
-                  <Inbox className="h-5 w-5 text-blue-500" />
-                  <h2 className="font-semibold">Recent Activity</h2>
+              <div className="flex items-center justify-between border-b border-border/50 px-6 py-4">
+                <div className="flex items-center gap-2.5">
+                  <Inbox className="h-4 w-4 text-blue-400" />
+                  <h2 className="text-sm font-semibold">Recent Activity</h2>
                 </div>
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground h-7 text-xs" asChild>
                   <Link href="/capture">
                     View inbox
-                    <ChevronRight className="ml-1 h-4 w-4" />
+                    <ChevronRight className="ml-0.5 h-3 w-3" />
                   </Link>
                 </Button>
               </div>
-              <div className="p-4">
+              <div className="p-5">
                 {recentItems.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <Inbox className="h-10 w-10 text-muted-foreground/30" />
-                    <p className="mt-3 text-sm text-muted-foreground">
+                  <div className="flex flex-col items-center justify-center py-10 text-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted/50">
+                      <Inbox className="h-5 w-5 text-muted-foreground/40" />
+                    </div>
+                    <p className="mt-4 text-sm text-muted-foreground">
                       No recent items
                     </p>
-                    <Button variant="outline" size="sm" className="mt-3" asChild>
+                    <Button variant="outline" size="sm" className="mt-4 h-8 text-xs" asChild>
                       <Link href="/capture">
                         Capture something
                       </Link>
@@ -245,36 +242,36 @@ export function HomePageClient({
                     {recentItems.map((item) => (
                       <li
                         key={item.id}
-                        className="flex items-center gap-3 rounded-lg border border-border bg-background p-3"
+                        className="flex items-center gap-3 rounded-lg border border-border/30 bg-background/50 p-3.5 transition-colors hover:border-border/60"
                       >
                         <div className={cn(
-                          "flex h-8 w-8 items-center justify-center rounded-full",
+                          "flex h-8 w-8 items-center justify-center rounded-lg",
                           item.is_completed
-                            ? "bg-emerald-500/10"
+                            ? "bg-emerald-500/8"
                             : item.layer === 'capture'
-                              ? "bg-blue-500/10"
+                              ? "bg-blue-500/8"
                               : item.layer === 'process'
-                                ? "bg-amber-500/10"
-                                : "bg-green-500/10"
+                                ? "bg-amber-500/8"
+                                : "bg-emerald-500/8"
                         )}>
                           {item.is_completed ? (
-                            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
                           ) : item.layer === 'capture' ? (
-                            <Inbox className="h-4 w-4 text-blue-500" />
+                            <Inbox className="h-3.5 w-3.5 text-blue-400" />
                           ) : item.layer === 'process' ? (
-                            <ArrowRightLeft className="h-4 w-4 text-amber-500" />
+                            <ArrowRightLeft className="h-3.5 w-3.5 text-amber-400" />
                           ) : (
-                            <CalendarCheck className="h-4 w-4 text-green-500" />
+                            <CalendarCheck className="h-3.5 w-3.5 text-emerald-400" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className={cn(
                             "text-sm font-medium truncate",
-                            item.is_completed && "line-through text-muted-foreground"
+                            item.is_completed && "completed-text"
                           )}>
                             {item.title}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground mt-0.5">
                             {formatRelativeTime(item.created_at)}
                           </p>
                         </div>
@@ -285,116 +282,10 @@ export function HomePageClient({
               </div>
             </motion.div>
           </div>
-
-          {/* Quick Actions & Overview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.4 }}
-            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            <QuickActionCard
-              icon={Plus}
-              label="Quick Capture"
-              description="Add a new thought"
-              href="/capture"
-            />
-            <QuickActionCard
-              icon={ArrowRightLeft}
-              label="Process Inbox"
-              description={`${stats.inboxCount} items waiting`}
-              href="/capture"
-            />
-            <QuickActionCard
-              icon={FolderOpen}
-              label="View Spaces"
-              description={`${stats.spacesCount} spaces`}
-              href="/spaces"
-            />
-            <QuickActionCard
-              icon={Sparkles}
-              label="AI Assistant"
-              description="Press Cmd+J"
-              onClick={() => {
-                // Trigger AI Assistant
-                window.dispatchEvent(new KeyboardEvent('keydown', {
-                  key: 'j',
-                  metaKey: true
-                }));
-              }}
-            />
-          </motion.div>
-
-          {/* Progress Overview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.5 }}
-            className="rounded-xl border border-border bg-card p-6"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              <h2 className="font-semibold">Overall Progress</h2>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-3">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Items</p>
-                <p className="text-2xl font-bold">{stats.totalItems}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Completed</p>
-                <p className="text-2xl font-bold">{stats.totalCompleted}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Completion Rate</p>
-                <p className="text-2xl font-bold">{completionRate}%</p>
-              </div>
-            </div>
-            <div className="mt-4">
-              <div className="h-2 rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full bg-primary transition-all duration-500"
-                  style={{ width: `${completionRate}%` }}
-                />
-              </div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </div>
   );
-}
-
-function QuickActionCard({
-  icon: Icon,
-  label,
-  description,
-  href,
-  onClick,
-}: {
-  icon: React.ElementType;
-  label: string;
-  description: string;
-  href?: string;
-  onClick?: () => void;
-}) {
-  const content = (
-    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50 hover:bg-muted/50 cursor-pointer">
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-        <Icon className="h-5 w-5 text-primary" />
-      </div>
-      <div>
-        <p className="text-sm font-medium">{label}</p>
-        <p className="text-xs text-muted-foreground">{description}</p>
-      </div>
-    </div>
-  );
-
-  if (href) {
-    return <Link href={href}>{content}</Link>;
-  }
-
-  return <button onClick={onClick} className="w-full text-left">{content}</button>;
 }
 
 function getGreeting(): string {

@@ -114,34 +114,39 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background px-4">
+      {/* Background gradient */}
+      <div className="gradient-mesh absolute inset-0 opacity-50" />
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-sm space-y-6"
+        className="relative w-full max-w-sm space-y-8"
       >
         {/* Logo */}
-        <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-            <Brain className="h-7 w-7 text-primary" />
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/20">
+            <Brain className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">MindBase</h1>
-          <p className="text-sm text-muted-foreground">
-            Create your account
-          </p>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Create your account</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Start your 14-day free trial
+            </p>
+          </div>
         </div>
 
         {/* Signup Form */}
-        <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-xl border border-border/60 bg-card/80 p-6 shadow-lg shadow-black/5 backdrop-blur-sm">
           <Tabs defaultValue="password" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="password" className="gap-2">
-                <KeyRound className="h-4 w-4" />
+            <TabsList className="grid w-full grid-cols-2 mb-5">
+              <TabsTrigger value="password" className="gap-2 text-xs">
+                <KeyRound className="h-3.5 w-3.5" />
                 Password
               </TabsTrigger>
-              <TabsTrigger value="magic" className="gap-2">
-                <Mail className="h-4 w-4" />
+              <TabsTrigger value="magic" className="gap-2 text-xs">
+                <Mail className="h-3.5 w-3.5" />
                 Magic Link
               </TabsTrigger>
             </TabsList>
@@ -149,7 +154,7 @@ export default function SignupPage() {
             <TabsContent value="password">
               <form onSubmit={handlePasswordSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email-password">Email</Label>
+                  <Label htmlFor="email-password" className="text-xs">Email</Label>
                   <Input
                     id="email-password"
                     type="email"
@@ -159,11 +164,12 @@ export default function SignupPage() {
                     disabled={isLoading}
                     autoComplete="email"
                     autoFocus
+                    className="h-10"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-xs">Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -172,11 +178,12 @@ export default function SignupPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
                     autoComplete="new-password"
+                    className="h-10"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Label htmlFor="confirm-password" className="text-xs">Confirm Password</Label>
                   <Input
                     id="confirm-password"
                     type="password"
@@ -185,12 +192,13 @@ export default function SignupPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={isLoading}
                     autoComplete="new-password"
+                    className="h-10"
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full h-10 shadow-sm"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Creating account...' : 'Create Account'}
@@ -201,7 +209,7 @@ export default function SignupPage() {
             <TabsContent value="magic">
               <form onSubmit={handleMagicLink} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email-magic">Email</Label>
+                  <Label htmlFor="email-magic" className="text-xs">Email</Label>
                   <Input
                     id="email-magic"
                     type="email"
@@ -210,12 +218,13 @@ export default function SignupPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
                     autoComplete="email"
+                    className="h-10"
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full h-10 shadow-sm"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Sending...' : 'Get Started with Email'}
@@ -229,7 +238,7 @@ export default function SignupPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`mt-4 rounded-md p-3 text-sm ${
+              className={`mt-4 rounded-lg p-3 text-sm ${
                 message.type === 'success'
                   ? 'bg-success-subtle text-success'
                   : 'bg-error-subtle text-error'
@@ -241,14 +250,14 @@ export default function SignupPage() {
         </div>
 
         {/* Trial info */}
-        <div className="text-center text-sm text-muted-foreground">
-          <p>Start your 14-day free trial. No credit card required.</p>
-        </div>
+        <p className="text-center text-xs text-muted-foreground/70">
+          No credit card required. Cancel anytime.
+        </p>
 
         {/* Login link */}
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{' '}
-          <Link href="/login" className="text-primary hover:underline">
+          <Link href="/login" className="text-primary hover:underline font-medium">
             Sign in
           </Link>
         </p>

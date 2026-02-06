@@ -13,6 +13,7 @@ interface QuickCaptureProps {
 
 export function QuickCapture({ onCapture, isLoading = false }: QuickCaptureProps) {
   const [value, setValue] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-focus on mount and on Cmd+N
@@ -51,19 +52,21 @@ export function QuickCapture({ onCapture, isLoading = false }: QuickCaptureProps
   };
 
   return (
-    <div className="capture-input rounded-lg border border-border bg-card transition-shadow">
+    <div className="capture-input rounded-xl border border-border/60 bg-card/80 backdrop-blur-sm">
       <div className="relative flex items-center gap-2">
         <div className="relative flex-1">
-          <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-            <Plus className="h-5 w-5" />
+          <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
+            <Plus className={`h-5 w-5 transition-colors duration-200 ${isFocused ? 'text-blue-400' : 'text-muted-foreground'}`} />
           </div>
           <Textarea
             ref={textareaRef}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             placeholder="What's on your mind?"
-            className="min-h-[52px] resize-none border-0 bg-transparent py-4 pl-12 pr-24 text-base focus-visible:ring-0"
+            className="min-h-[56px] resize-none border-0 bg-transparent py-4 pl-12 pr-28 text-[15px] placeholder:text-muted-foreground/60 focus-visible:ring-0"
             rows={1}
             disabled={isLoading}
           />
@@ -72,12 +75,12 @@ export function QuickCapture({ onCapture, isLoading = false }: QuickCaptureProps
               size="sm"
               onClick={handleSubmit}
               disabled={!value.trim() || isLoading}
-              className="gap-1.5"
+              className="gap-1.5 rounded-lg px-4 shadow-sm"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <CornerDownLeft className="h-4 w-4" />
+                <CornerDownLeft className="h-3.5 w-3.5" />
               )}
               Capture
             </Button>
