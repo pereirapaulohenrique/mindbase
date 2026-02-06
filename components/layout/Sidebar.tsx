@@ -24,10 +24,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Brain,
   type LucideIcon,
 } from 'lucide-react';
 import { ICON_MAP, COLOR_PALETTE } from '@/components/icons';
+import { MindBaseLogo } from '@/components/brand/MindBaseLogo';
 
 // Navigation items with Lucide icons
 const mainNav: { href: string; label: string; icon: LucideIcon; shortcut: string }[] = [
@@ -69,23 +69,21 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
     <TooltipProvider delayDuration={0}>
       <motion.aside
         initial={false}
-        animate={{ width: sidebarCollapsed ? 64 : 240 }}
+        animate={{ width: sidebarCollapsed ? 68 : 252 }}
         transition={{ duration: 0.2, ease: 'easeInOut' }}
-        className="fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-border bg-sidebar backdrop-blur-xl"
+        className="fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-border/60 bg-sidebar"
       >
         {/* Header */}
-        <div className="flex h-14 items-center justify-between px-3">
-          <Link href="/home" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-              <Brain className="h-5 w-5 text-primary" />
-            </div>
+        <div className="flex h-16 items-center justify-between px-4">
+          <Link href="/home" className="flex items-center gap-2.5">
+            <MindBaseLogo size={32} />
             <AnimatePresence>
               {!sidebarCollapsed && (
                 <motion.span
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: 'auto' }}
                   exit={{ opacity: 0, width: 0 }}
-                  className="font-semibold text-sidebar-foreground overflow-hidden whitespace-nowrap"
+                  className="text-[15px] font-semibold tracking-tight text-sidebar-foreground overflow-hidden whitespace-nowrap"
                 >
                   MindBase
                 </motion.span>
@@ -96,7 +94,7 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-sidebar-foreground"
+              className="h-7 w-7 text-muted-foreground hover:text-sidebar-foreground"
               onClick={toggleSidebar}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -104,9 +102,9 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
           )}
         </div>
 
-        <ScrollArea className="flex-1 px-2">
+        <ScrollArea className="flex-1 px-2.5">
           {/* Main Navigation */}
-          <nav className="space-y-1 py-2">
+          <nav className="space-y-0.5 py-2">
             {mainNav.map((item) => (
               <NavItem
                 key={item.href}
@@ -121,13 +119,13 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
             ))}
           </nav>
 
-          <Separator className="my-2" />
+          <Separator className="my-3 opacity-50" />
 
           {/* Spaces Section */}
           {!sidebarCollapsed && (
             <div className="py-2">
               <SectionHeader title="Spaces" href="/spaces" />
-              <div className="space-y-1">
+              <div className="mt-1 space-y-0.5">
                 {spaces.map((space) => (
                   <DynamicNavItem
                     key={space.id}
@@ -140,11 +138,11 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
                 ))}
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground h-8"
+                  className="w-full justify-start text-sm text-muted-foreground/70 hover:text-foreground h-8"
                   asChild
                 >
                   <Link href="/spaces">
-                    <Plus className="h-4 w-4 mr-2" /> Add Space
+                    <Plus className="h-3.5 w-3.5 mr-2" /> Add Space
                   </Link>
                 </Button>
               </div>
@@ -155,7 +153,7 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
           {!sidebarCollapsed && (
             <div className="py-2">
               <SectionHeader title="Projects" href="/projects" />
-              <div className="space-y-1">
+              <div className="mt-1 space-y-0.5">
                 {projects.map((project) => (
                   <DynamicNavItem
                     key={project.id}
@@ -168,11 +166,11 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
                 ))}
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground h-8"
+                  className="w-full justify-start text-sm text-muted-foreground/70 hover:text-foreground h-8"
                   asChild
                 >
                   <Link href="/projects">
-                    <Plus className="h-4 w-4 mr-2" /> Add Project
+                    <Plus className="h-3.5 w-3.5 mr-2" /> Add Project
                   </Link>
                 </Button>
               </div>
@@ -183,7 +181,7 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
           {!sidebarCollapsed && (
             <div className="py-2">
               <SectionHeader title="Pages" href="/pages" />
-              <div className="space-y-1">
+              <div className="mt-1 space-y-0.5">
                 {pages.slice(0, 5).map((page) => (
                   <DynamicNavItem
                     key={page.id}
@@ -195,11 +193,11 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
                 ))}
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-sm text-muted-foreground hover:text-foreground h-8"
+                  className="w-full justify-start text-sm text-muted-foreground/70 hover:text-foreground h-8"
                   asChild
                 >
                   <Link href="/pages">
-                    <Plus className="h-4 w-4 mr-2" /> New Page
+                    <Plus className="h-3.5 w-3.5 mr-2" /> New Page
                   </Link>
                 </Button>
               </div>
@@ -208,7 +206,7 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
         </ScrollArea>
 
         {/* Bottom Navigation */}
-        <div className="border-t border-border p-2">
+        <div className="border-t border-border/50 p-2.5">
           {bottomNav.map((item) => (
             <NavItem
               key={item.href}
@@ -223,11 +221,11 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
 
         {/* Expand button when collapsed */}
         {sidebarCollapsed && (
-          <div className="border-t border-border p-2">
+          <div className="border-t border-border/50 p-2.5">
             <Button
               variant="ghost"
               size="icon"
-              className="w-full h-10"
+              className="w-full h-9"
               onClick={toggleSidebar}
             >
               <ChevronRight className="h-4 w-4" />
@@ -242,7 +240,7 @@ export function Sidebar({ inboxCount = 0, spaces = [], projects = [], pages = []
 // Section header component with link
 function SectionHeader({ title, href }: { title: string; href?: string }) {
   const content = (
-    <h3 className="mb-1 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+    <h3 className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/60">
       {title}
     </h3>
   );
@@ -270,15 +268,15 @@ interface NavItemProps {
 }
 
 function NavItem({ href, label, icon: Icon, isActive, isCollapsed, shortcut, badge }: NavItemProps) {
-  // Layer-specific active border colors
-  const layerBorderColor = isActive
+  // Layer-specific active styles
+  const layerAccent = isActive
     ? href === '/capture'
-      ? 'border-l-blue-500'
+      ? 'border-l-blue-400 bg-blue-500/[0.06]'
       : href === '/process'
-        ? 'border-l-amber-500'
+        ? 'border-l-amber-400 bg-amber-500/[0.06]'
         : href === '/commit'
-          ? 'border-l-green-500'
-          : 'border-l-primary'
+          ? 'border-l-emerald-400 bg-emerald-500/[0.06]'
+          : 'border-l-primary bg-primary/[0.06]'
     : 'border-l-transparent';
 
   const layerIconColor = isActive
@@ -287,18 +285,18 @@ function NavItem({ href, label, icon: Icon, isActive, isCollapsed, shortcut, bad
       : href === '/process'
         ? 'text-amber-400'
         : href === '/commit'
-          ? 'text-green-400'
-          : ''
+          ? 'text-emerald-400'
+          : 'text-primary'
     : '';
 
   const content = (
     <Link
       href={href}
       className={cn(
-        'flex items-center gap-3 rounded-md border-l-[3px] px-3 py-2 text-sm transition-colors',
+        'flex items-center gap-3 rounded-lg border-l-2 px-3 py-2.5 text-sm transition-all duration-150',
         isActive
-          ? `bg-sidebar-accent/50 font-semibold text-sidebar-accent-foreground ${layerBorderColor}`
-          : `border-l-transparent text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground`,
+          ? `${layerAccent} font-medium text-sidebar-accent-foreground`
+          : `border-l-transparent text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground`,
         isCollapsed && 'justify-center border-l-0 px-2'
       )}
     >
@@ -307,12 +305,12 @@ function NavItem({ href, label, icon: Icon, isActive, isCollapsed, shortcut, bad
         <>
           <span className="flex-1 truncate">{label}</span>
           {badge !== undefined && badge > 0 && (
-            <span className="animate-pulse-subtle rounded-full bg-blue-500/15 px-2 py-0.5 text-xs font-medium text-blue-400">
+            <span className="animate-pulse-subtle rounded-full bg-blue-500/15 px-2 py-0.5 text-[11px] font-medium text-blue-400 tabular-nums">
               {badge > 99 ? '99+' : badge}
             </span>
           )}
           {shortcut && (
-            <span className="text-xs text-muted-foreground">{shortcut}</span>
+            <span className="text-[11px] text-muted-foreground/50">{shortcut}</span>
           )}
         </>
       )}
@@ -351,10 +349,10 @@ function DynamicNavItem({ href, label, iconName, color, isActive }: DynamicNavIt
     <Link
       href={href}
       className={cn(
-        'flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors',
+        'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-150',
         isActive
           ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-          : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+          : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
       )}
     >
       <div className={cn(

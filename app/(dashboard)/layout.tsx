@@ -76,7 +76,7 @@ export default async function DashboardLayout({
         </div>
 
         {/* Main content area */}
-        <div className="flex flex-1 flex-col md:pl-[240px] transition-all duration-200">
+        <div className="flex flex-1 flex-col md:pl-[252px] transition-all duration-200">
           {/* Header */}
           <Header
             user={

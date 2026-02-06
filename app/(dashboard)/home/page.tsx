@@ -94,9 +94,12 @@ export default async function HomePage() {
     .eq('user_id', user.id)
     .eq('status', 'active');
 
+  const showOnboarding = profile?.onboarding_completed === false;
+
   return (
     <HomePageClient
       profile={profile}
+      showOnboarding={showOnboarding}
       stats={{
         inboxCount: inboxCount || 0,
         processingCount: processingCount || 0,
