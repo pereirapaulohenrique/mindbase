@@ -1,10 +1,11 @@
 /**
- * OffMind Logo — Infinity symbol with teal-to-terracotta gradient.
+ * OffMind Logo — 3D infinity ribbon with teal-to-terracotta gradient.
  *
- * Represents the continuous GTD flow: capture (teal/blue) → process → commit (terracotta/warm).
- * The infinity loop = thoughts flowing endlessly until OffMind breaks the cycle.
+ * Represents the continuous GTD flow: capture (teal) → process → commit (terracotta).
+ * The infinity ribbon = thoughts flowing endlessly until OffMind breaks the cycle.
  *
- * Colors: Teal #06b6d4 → Terracotta #ea580c (vibrant)
+ * Shape reference: Wide 3D ribbon band, round loops, smooth diagonal crossover.
+ * Colors: Vibrant Teal #0891b2 → Vibrant Terracotta #ea580c
  */
 
 interface OffMindLogoProps {
@@ -53,8 +54,8 @@ function Wordmark({ size, id }: { size: number; id: string }) {
           y2="32"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#08c4dc" />
-          <stop offset="40%" stopColor="#a0866a" />
+          <stop offset="0%" stopColor="#0891b2" />
+          <stop offset="40%" stopColor="#8a7a60" />
           <stop offset="100%" stopColor="#ea580c" />
         </linearGradient>
       </defs>
@@ -86,7 +87,7 @@ function Wordmark({ size, id }: { size: number; id: string }) {
   );
 }
 
-/* ─── Infinity mark: elongated oval loops, thick strokes ─── */
+/* ─── Infinity mark: 3D ribbon band, round loops, thick crossover ─── */
 function InfinityMark({
   size,
   id,
@@ -96,151 +97,236 @@ function InfinityMark({
   id: string;
   className?: string;
 }) {
-  // Wider aspect ratio — elongated ovals, not circles
+  // Aspect ratio ~2.1:1 matching the reference's rounder loops
   const width = size;
-  const height = size * 0.5;
+  const height = size * 0.48;
 
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 260 104"
+      viewBox="0 0 320 152"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-label="OffMind logo"
     >
       <defs>
-        {/* Main gradient: vibrant teal (left) to vibrant terracotta (right) */}
-        <linearGradient
-          id={`${id}-main`}
-          x1="0"
-          y1="52"
-          x2="260"
-          y2="52"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop offset="0%" stopColor="#06b6d4" />
-          <stop offset="30%" stopColor="#0891b2" />
-          <stop offset="50%" stopColor="#b8703a" />
-          <stop offset="70%" stopColor="#ea580c" />
-          <stop offset="100%" stopColor="#dc2626" />
-        </linearGradient>
+        {/* ── LEFT LOOP GRADIENTS (Vibrant Teal) ── */}
 
-        {/* Top highlight for 3D depth */}
-        <linearGradient
-          id={`${id}-highlight`}
-          x1="130"
-          y1="0"
-          x2="130"
-          y2="104"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
-          <stop offset="45%" stopColor="rgba(255,255,255,0)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0.12)" />
-        </linearGradient>
-
-        {/* Left loop gradient (vibrant teal) */}
+        {/* Left loop main: rich teal with subtle variation */}
         <linearGradient
           id={`${id}-left`}
-          x1="0"
-          y1="20"
-          x2="130"
-          y2="80"
+          x1="10"
+          y1="30"
+          x2="140"
+          y2="130"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#06b6d4" />
-          <stop offset="50%" stopColor="#08c4dc" />
-          <stop offset="100%" stopColor="#0e9aaf" />
+          <stop offset="0%" stopColor="#0ea5c9" />
+          <stop offset="40%" stopColor="#0891b2" />
+          <stop offset="100%" stopColor="#0e7490" />
         </linearGradient>
 
-        {/* Right loop gradient (vibrant terracotta/orange) */}
+        {/* Left loop highlight (top edge lighter = 3D ribbon top surface) */}
+        <linearGradient
+          id={`${id}-left-hi`}
+          x1="70"
+          y1="0"
+          x2="70"
+          y2="152"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#22d3ee" />
+          <stop offset="35%" stopColor="#06b6d4" />
+          <stop offset="70%" stopColor="#0891b2" />
+          <stop offset="100%" stopColor="#065f73" />
+        </linearGradient>
+
+        {/* ── RIGHT LOOP GRADIENTS (Vibrant Terracotta) ── */}
+
+        {/* Right loop main: rich terracotta with variation */}
         <linearGradient
           id={`${id}-right`}
-          x1="130"
-          y1="20"
-          x2="260"
-          y2="80"
+          x1="180"
+          y1="30"
+          x2="310"
+          y2="130"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#f06520" />
-          <stop offset="50%" stopColor="#ea580c" />
-          <stop offset="100%" stopColor="#dc4510" />
+          <stop offset="0%" stopColor="#f97316" />
+          <stop offset="40%" stopColor="#ea580c" />
+          <stop offset="100%" stopColor="#c2410c" />
         </linearGradient>
 
-        {/* Cross-over front piece gradient (blend zone) */}
+        {/* Right loop highlight (top edge lighter) */}
         <linearGradient
-          id={`${id}-cross`}
-          x1="95"
-          y1="14"
-          x2="165"
-          y2="90"
+          id={`${id}-right-hi`}
+          x1="250"
+          y1="0"
+          x2="250"
+          y2="152"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#06b6d4" />
-          <stop offset="50%" stopColor="#a07848" />
+          <stop offset="0%" stopColor="#fb923c" />
+          <stop offset="35%" stopColor="#f97316" />
+          <stop offset="70%" stopColor="#ea580c" />
+          <stop offset="100%" stopColor="#9a3412" />
+        </linearGradient>
+
+        {/* ── CROSSOVER GRADIENT (teal → terracotta blend) ── */}
+        <linearGradient
+          id={`${id}-cross`}
+          x1="120"
+          y1="20"
+          x2="200"
+          y2="132"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#0891b2" />
+          <stop offset="35%" stopColor="#2a9a9e" />
+          <stop offset="65%" stopColor="#c87438" />
           <stop offset="100%" stopColor="#ea580c" />
         </linearGradient>
 
-        {/* Subtle drop shadow */}
-        <filter id={`${id}-shadow`} x="-10%" y="-10%" width="120%" height="130%">
-          <feDropShadow dx="0" dy="3" stdDeviation="5" floodColor="#000000" floodOpacity="0.10" />
+        {/* Crossover highlight */}
+        <linearGradient
+          id={`${id}-cross-hi`}
+          x1="145"
+          y1="10"
+          x2="175"
+          y2="142"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#22d3ee" />
+          <stop offset="30%" stopColor="#15a0b0" />
+          <stop offset="70%" stopColor="#d97040" />
+          <stop offset="100%" stopColor="#fb923c" />
+        </linearGradient>
+
+        {/* ── 3D DEPTH: top-to-bottom highlight ── */}
+        <linearGradient
+          id={`${id}-depth`}
+          x1="160"
+          y1="0"
+          x2="160"
+          y2="152"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
+          <stop offset="30%" stopColor="rgba(255,255,255,0.08)" />
+          <stop offset="60%" stopColor="rgba(0,0,0,0)" />
+          <stop offset="100%" stopColor="rgba(0,0,0,0.15)" />
+        </linearGradient>
+
+        {/* ── SHADOW ── */}
+        <filter id={`${id}-shadow`} x="-8%" y="-5%" width="116%" height="125%">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#1a0e05" floodOpacity="0.15" />
         </filter>
       </defs>
 
       <g filter={`url(#${id}-shadow)`}>
         {/*
-          Infinity symbol — elongated oval loops.
-          Wider viewBox (260x104) with ovals stretched to x extremes.
-          Back strands render first, front crossover on top.
+          3D Infinity ribbon — round loops matching logo6.png reference.
+          ViewBox 320x152, center at 160,76.
+          Left loop center ~80, right loop center ~240.
+          Loops are nearly circular. Ribbon is very thick (strokeWidth 34).
+          Layering: back strands → front crossover → highlight overlays.
         */}
 
-        {/* BACK STRAND: right loop (oval, stretched right) */}
+        {/* ═══ LAYER 1: BACK STRANDS (behind the crossover) ═══ */}
+
+        {/* Back: right loop (terracotta) — goes behind at center */}
         <path
-          d="M130,42 C138,24 156,8 190,8 C232,8 252,28 252,52 C252,76 232,96 190,96 C160,96 142,78 130,62"
+          d="M160,48 C172,26 200,6 240,6 C286,6 312,34 312,76 C312,118 286,146 240,146 C200,146 172,126 160,104"
           stroke={`url(#${id}-right)`}
-          strokeWidth="24"
+          strokeWidth="34"
           strokeLinecap="round"
           fill="none"
         />
 
-        {/* BACK STRAND: left loop (oval, stretched left) */}
+        {/* Back: left loop (teal) — goes behind at center */}
         <path
-          d="M130,62 C122,80 104,96 70,96 C28,96 8,76 8,52 C8,28 28,8 70,8 C100,8 118,26 130,42"
+          d="M160,104 C148,126 120,146 80,146 C34,146 8,118 8,76 C8,34 34,6 80,6 C120,6 148,26 160,48"
           stroke={`url(#${id}-left)`}
-          strokeWidth="24"
+          strokeWidth="34"
           strokeLinecap="round"
           fill="none"
         />
 
-        {/* FRONT STRAND: crossover piece (teal top-left → terracotta bottom-right) */}
+        {/* ═══ LAYER 2: FRONT CROSSOVER (teal passes over terracotta) ═══ */}
+
+        {/* Front crossover: teal from upper-left → terracotta at lower-right */}
         <path
-          d="M116,30 C122,40 138,64 144,74"
+          d="M144,32 C150,46 170,106 176,120"
           stroke={`url(#${id}-cross)`}
-          strokeWidth="26"
+          strokeWidth="36"
           strokeLinecap="round"
           fill="none"
         />
 
-        {/* Highlight overlay — left loop */}
+        {/* ═══ LAYER 3: 3D HIGHLIGHT OVERLAYS ═══ */}
+
+        {/* Highlight: left loop — brighter top edge, darker bottom */}
         <path
-          d="M130,62 C122,80 104,96 70,96 C28,96 8,76 8,52 C8,28 28,8 70,8 C100,8 118,26 130,42"
-          stroke={`url(#${id}-highlight)`}
-          strokeWidth="24"
+          d="M160,104 C148,126 120,146 80,146 C34,146 8,118 8,76 C8,34 34,6 80,6 C120,6 148,26 160,48"
+          stroke={`url(#${id}-left-hi)`}
+          strokeWidth="34"
           strokeLinecap="round"
           fill="none"
-          opacity="0.35"
+          opacity="0.5"
         />
 
-        {/* Highlight overlay — right loop */}
+        {/* Highlight: right loop — brighter top edge, darker bottom */}
         <path
-          d="M130,42 C138,24 156,8 190,8 C232,8 252,28 252,52 C252,76 232,96 190,96 C160,96 142,78 130,62"
-          stroke={`url(#${id}-highlight)`}
-          strokeWidth="24"
+          d="M160,48 C172,26 200,6 240,6 C286,6 312,34 312,76 C312,118 286,146 240,146 C200,146 172,126 160,104"
+          stroke={`url(#${id}-right-hi)`}
+          strokeWidth="34"
           strokeLinecap="round"
           fill="none"
-          opacity="0.35"
+          opacity="0.5"
+        />
+
+        {/* Highlight: crossover — smooth color transition */}
+        <path
+          d="M144,32 C150,46 170,106 176,120"
+          stroke={`url(#${id}-cross-hi)`}
+          strokeWidth="36"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.4"
+        />
+
+        {/* ═══ LAYER 4: GLOBAL 3D DEPTH (top light, bottom dark) ═══ */}
+
+        {/* Depth overlay on left loop */}
+        <path
+          d="M160,104 C148,126 120,146 80,146 C34,146 8,118 8,76 C8,34 34,6 80,6 C120,6 148,26 160,48"
+          stroke={`url(#${id}-depth)`}
+          strokeWidth="34"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.6"
+        />
+
+        {/* Depth overlay on right loop */}
+        <path
+          d="M160,48 C172,26 200,6 240,6 C286,6 312,34 312,76 C312,118 286,146 240,146 C200,146 172,126 160,104"
+          stroke={`url(#${id}-depth)`}
+          strokeWidth="34"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.6"
+        />
+
+        {/* Depth overlay on crossover */}
+        <path
+          d="M144,32 C150,46 170,106 176,120"
+          stroke={`url(#${id}-depth)`}
+          strokeWidth="36"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.5"
         />
       </g>
     </svg>
@@ -254,13 +340,13 @@ export function OffMindIcon({ size = 16, className = '' }: { size?: number; clas
   const id = `om-ico-${Math.random().toString(36).slice(2, 7)}`;
 
   const width = size;
-  const height = size * 0.5;
+  const height = size * 0.48;
 
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 260 104"
+      viewBox="0 0 320 152"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -269,22 +355,22 @@ export function OffMindIcon({ size = 16, className = '' }: { size?: number; clas
         <linearGradient
           id={`${id}-g`}
           x1="0"
-          y1="52"
-          x2="260"
-          y2="52"
+          y1="76"
+          x2="320"
+          y2="76"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#06b6d4" />
-          <stop offset="45%" stopColor="#7a8a5a" />
+          <stop offset="0%" stopColor="#0891b2" />
+          <stop offset="45%" stopColor="#6d8868" />
           <stop offset="100%" stopColor="#ea580c" />
         </linearGradient>
       </defs>
 
       {/* Simplified single-path infinity for small sizes */}
       <path
-        d="M130,42 C118,26 100,8 70,8 C28,8 8,28 8,52 C8,76 28,96 70,96 C104,96 122,80 130,62 C138,78 156,96 190,96 C232,96 252,76 252,52 C252,28 232,8 190,8 C156,8 142,26 130,42 Z"
+        d="M160,48 C148,26 120,6 80,6 C34,6 8,34 8,76 C8,118 34,146 80,146 C120,146 148,126 160,104 C172,126 200,146 240,146 C286,146 312,118 312,76 C312,34 286,6 240,6 C200,6 172,26 160,48 Z"
         stroke={`url(#${id}-g)`}
-        strokeWidth="20"
+        strokeWidth="28"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
