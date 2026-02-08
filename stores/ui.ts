@@ -38,6 +38,10 @@ interface UIState {
   organizeViewType: 'columns' | 'list' | 'grid';
   setOrganizeViewType: (type: 'columns' | 'list' | 'grid') => void;
 
+  // View type for Inbox page
+  inboxViewType: 'list' | 'grid' | 'compact';
+  setInboxViewType: (type: 'list' | 'grid' | 'compact') => void;
+
   // Theme (dark by default)
   theme: 'dark' | 'light';
   setTheme: (theme: 'dark' | 'light') => void;
@@ -95,6 +99,10 @@ export const useUIStore = create<UIState>((set) => ({
   // View type - Columns is default for Organize
   organizeViewType: 'columns',
   setOrganizeViewType: (type) => set({ organizeViewType: type }),
+
+  // View type - List is default for Inbox
+  inboxViewType: 'list',
+  setInboxViewType: (type) => set({ inboxViewType: type }),
 
   // Theme
   theme: 'dark',

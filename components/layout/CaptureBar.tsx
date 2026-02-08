@@ -74,6 +74,35 @@ export function CaptureBar({ userId }: CaptureBarProps) {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent<HTMLInputElement>) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+
+          const file = item.getAsFile();
+          if (!file) return;
+
+          if (file.size > 10 * 1024 * 1024) {
+            toast.error('Image must be under 10MB');
+            return;
+          }
+
+          if (imagePreview) URL.revokeObjectURL(imagePreview);
+
+          setImageFile(file);
+          setImagePreview(URL.createObjectURL(file));
+          return;
+        }
+      }
+    },
+    [imagePreview],
+  );
+
   const removeImage = () => {
     if (imagePreview) URL.revokeObjectURL(imagePreview);
     setImageFile(null);
@@ -248,6 +277,7 @@ export function CaptureBar({ userId }: CaptureBarProps) {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
             onFocus={handleFocus}
             onBlur={handleBlur}
             placeholder={isRecording ? `Recording... ${formatDuration(duration)}` : 'Capture a thought, task, idea, link...'}

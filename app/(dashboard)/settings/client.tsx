@@ -12,6 +12,8 @@ import {
   Key,
   MoreHorizontal,
   X,
+  Users,
+  UserPlus,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -37,11 +39,12 @@ import { IconPicker } from '@/components/shared/IconPicker';
 import { ColorPicker } from '@/components/shared/ColorPicker';
 import { ICON_MAP, COLOR_PALETTE, getSuggestedColor } from '@/components/icons';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useContacts } from '@/hooks/useContacts';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { User } from '@supabase/supabase-js';
-import type { Profile, Destination } from '@/types/database';
+import type { Profile, Destination, Contact } from '@/types/database';
 import type { CustomFieldDefinition } from '@/types';
 
 interface SettingsPageClientProps {
@@ -82,6 +85,13 @@ export function SettingsPageClient({ user, profile, destinations: initialDestina
     custom_fields: [] as CustomFieldDefinition[],
   });
   const [isDestSaving, setIsDestSaving] = useState(false);
+
+  // Contacts state
+  const { contacts, isLoading: isContactsLoading, addContact, updateContact, deleteContact } = useContacts(user.id);
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const [contactForm, setContactForm] = useState({ name: '', email: '', phone: '', notes: '' });
+  const [isContactSaving, setIsContactSaving] = useState(false);
 
   // Handle checkout result
   useEffect(() => {
@@ -332,6 +342,66 @@ export function SettingsPageClient({ user, profile, destinations: initialDestina
     }
   };
 
+  // Contact management functions
+  const resetContactForm = () => setContactForm({ name: '', email: '', phone: '', notes: '' });
+
+  const openCreateContact = () => {
+    setEditingContact(null);
+    resetContactForm();
+    setIsContactDialogOpen(true);
+  };
+
+  const openEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+    setContactForm({
+      name: contact.name,
+      email: contact.email || '',
+      phone: contact.phone || '',
+      notes: contact.notes || '',
+    });
+    setIsContactDialogOpen(true);
+  };
+
+  const handleSaveContact = async () => {
+    if (!contactForm.name.trim()) { toast.error('Name is required'); return; }
+    setIsContactSaving(true);
+    try {
+      if (editingContact) {
+        await updateContact(editingContact.id, {
+          name: contactForm.name.trim(),
+          email: contactForm.email || null,
+          phone: contactForm.phone || null,
+          notes: contactForm.notes || null,
+        });
+        toast.success('Contact updated');
+      } else {
+        await addContact({
+          name: contactForm.name.trim(),
+          email: contactForm.email || null,
+          phone: contactForm.phone || null,
+          notes: contactForm.notes || null,
+        });
+        toast.success('Contact added');
+      }
+      setIsContactDialogOpen(false);
+      resetContactForm();
+      setEditingContact(null);
+    } catch {
+      toast.error('Failed to save contact');
+    } finally {
+      setIsContactSaving(false);
+    }
+  };
+
+  const handleDeleteContact = async (id: string) => {
+    try {
+      await deleteContact(id);
+      toast.success('Contact deleted');
+    } catch {
+      toast.error('Failed to delete contact');
+    }
+  };
+
   const handleSignOut = async () => {
     const supabase = getSupabase();
     await supabase.auth.signOut();
@@ -510,6 +580,72 @@ export function SettingsPageClient({ user, profile, destinations: initialDestina
                   {isSaving ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
+            </div>
+          </section>
+
+          {/* People */}
+          <section>
+            <div className="rounded-2xl bg-[var(--bg-surface)] shadow-[var(--shadow-card)] border border-[var(--border-subtle)] p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-[var(--text-muted)]" />
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">People</h2>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={openCreateContact}
+                  className="gap-2 rounded-xl bg-[var(--accent-base)] text-white hover:bg-[var(--accent-hover)]"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Add Person
+                </Button>
+              </div>
+              <p className="text-sm text-[var(--text-muted)] mb-4">
+                Manage contacts for waiting-for references and @mentions.
+              </p>
+
+              {isContactsLoading ? (
+                <div className="text-sm text-[var(--text-muted)]">Loading contacts...</div>
+              ) : contacts.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-[var(--border-default)] p-8 text-center">
+                  <Users className="mx-auto h-8 w-8 text-[var(--text-disabled)] mb-2" />
+                  <p className="text-sm text-[var(--text-muted)]">No contacts yet. Add people you work with.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {contacts.map((contact) => (
+                    <div
+                      key={contact.id}
+                      className="flex items-center justify-between rounded-xl border border-[var(--border-subtle)] px-4 py-3 hover:bg-[var(--bg-hover)] transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-[var(--text-primary)] truncate">{contact.name}</p>
+                        {contact.email && (
+                          <p className="text-xs text-[var(--text-muted)] truncate">{contact.email}</p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 ml-3">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                          onClick={() => openEditContact(contact)}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-[var(--text-muted)] hover:text-red-400"
+                          onClick={() => handleDeleteContact(contact.id)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
@@ -751,6 +887,69 @@ export function SettingsPageClient({ user, profile, destinations: initialDestina
             </Button>
             <Button onClick={handleSaveDestination} disabled={isDestSaving}>
               {isDestSaving ? 'Saving...' : editingDest ? 'Save Changes' : 'Create'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Contact Dialog */}
+      <Dialog open={isContactDialogOpen} onOpenChange={(open) => { if (!open) { setIsContactDialogOpen(false); setEditingContact(null); resetContactForm(); } }}>
+        <DialogContent className="sm:max-w-md rounded-2xl border-[var(--border-subtle)] bg-[var(--bg-surface)]">
+          <DialogHeader>
+            <DialogTitle className="text-[var(--text-primary)]">
+              {editingContact ? 'Edit Contact' : 'Add Contact'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label className="text-[var(--text-secondary)]">Name *</Label>
+              <Input
+                value={contactForm.name}
+                onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Full name"
+                className="rounded-xl"
+                autoFocus
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[var(--text-secondary)]">Email</Label>
+              <Input
+                value={contactForm.email}
+                onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="email@example.com"
+                type="email"
+                className="rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[var(--text-secondary)]">Phone</Label>
+              <Input
+                value={contactForm.phone}
+                onChange={(e) => setContactForm(prev => ({ ...prev, phone: e.target.value }))}
+                placeholder="+1 234 567 890"
+                className="rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[var(--text-secondary)]">Notes</Label>
+              <Textarea
+                value={contactForm.notes}
+                onChange={(e) => setContactForm(prev => ({ ...prev, notes: e.target.value }))}
+                placeholder="Any notes about this person..."
+                className="rounded-xl min-h-[80px] resize-none"
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => { setIsContactDialogOpen(false); setEditingContact(null); resetContactForm(); }} className="rounded-xl">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveContact}
+              disabled={isContactSaving || !contactForm.name.trim()}
+              className="rounded-xl bg-[var(--accent-base)] text-white hover:bg-[var(--accent-hover)]"
+            >
+              {isContactSaving ? 'Saving...' : editingContact ? 'Update' : 'Add'}
             </Button>
           </DialogFooter>
         </DialogContent>

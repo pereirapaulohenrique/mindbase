@@ -13,6 +13,7 @@ import {
   Check,
   ImageIcon,
   Mic,
+  ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/lib/utils/dates';
@@ -42,6 +43,8 @@ interface ItemCardProps {
   onDelete?: (id: string) => void;
   onMove?: (id: string, destinationId: string) => void;
   onClick?: () => void;
+  onEdit?: (item: Item) => void;
+  onProcess?: (item: Item) => void;
   onAISuggest?: (item: Item) => void;
   showAIButton?: boolean;
   compact?: boolean;
@@ -55,6 +58,8 @@ export function ItemCard({
   onDelete,
   onMove,
   onClick,
+  onEdit,
+  onProcess,
   onAISuggest,
   showAIButton = false,
   compact = false,
@@ -196,18 +201,25 @@ export function ItemCard({
             </TooltipProvider>
           )}
 
-          {/* Move to destination - visible on hover */}
+          {/* Move to destination */}
           {onMove && destinations && (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 opacity-0 translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0"
-                >
-                  <Send className="h-3.5 w-3.5" />
-                </Button>
-              </DropdownMenuTrigger>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                      >
+                        <Send className="h-3.5 w-3.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent><p>Quick route</p></TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <DropdownMenuContent align="end">
                 {destinations.map((dest) => {
                   const Icon = ICON_MAP[dest.icon] || Inbox;
@@ -225,21 +237,25 @@ export function ItemCard({
             </DropdownMenu>
           )}
 
-          {/* More options - visible on hover */}
+          {/* More options */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 opacity-0 translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0"
+                className="h-8 w-8 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
               >
                 <MoreHorizontal className="h-3.5 w-3.5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onClick}>
+              <DropdownMenuItem onClick={() => onEdit?.(item)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onProcess?.(item)}>
+                <ArrowRight className="mr-2 h-4 w-4" />
+                Process
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

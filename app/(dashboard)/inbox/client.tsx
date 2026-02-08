@@ -6,11 +6,16 @@ import { createClient } from '@/lib/supabase/client';
 import { useItemsStore } from '@/stores/items';
 import { useAISuggestion } from '@/hooks/useAISuggestion';
 import { ItemCard } from '@/components/items/ItemCard';
-import { ItemDetailPanel } from '@/components/items/ItemDetailPanel';
 import { AISuggestionBadge } from '@/components/items/AISuggestionBadge';
 import { BulkAIActions, type BulkAISuggestion } from '@/components/ai/BulkAIActions';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { InboxGridView } from '@/components/inbox/InboxGridView';
+import { InboxCompactView } from '@/components/inbox/InboxCompactView';
+import { useUIStore } from '@/stores/ui';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { List, LayoutGrid, Rows3 } from 'lucide-react';
 import type { Item, Destination, Space, Project } from '@/types/database';
 import { toast } from 'sonner';
 
@@ -26,7 +31,7 @@ export function InboxPageClient({ initialItems, destinations, spaces, projects, 
   const getSupabase = () => createClient();
   const { items, setItems, addItem, updateItem, removeItem, isLoading } = useItemsStore();
   const { suggestDestination, suggestion, isLoading: isAILoading, clearSuggestion } = useAISuggestion();
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const { openProcessingPanel, inboxViewType, setInboxViewType } = useUIStore();
   const [aiSuggestItemId, setAiSuggestItemId] = useState<string | null>(null);
 
   // Initialize items from server
@@ -216,6 +221,30 @@ export function InboxPageClient({ initialItems, destinations, spaces, projects, 
               pageType="capture"
               onApplySuggestions={handleApplyBulkSuggestions}
             />
+            <div className="flex rounded-xl bg-[var(--bg-inset)] shadow-[var(--shadow-sm)] border border-[var(--border-subtle)]">
+              {([
+                { type: 'list' as const, icon: List, label: 'List' },
+                { type: 'grid' as const, icon: LayoutGrid, label: 'Grid' },
+                { type: 'compact' as const, icon: Rows3, label: 'Compact' },
+              ]).map((btn, i, arr) => (
+                <Button
+                  key={btn.type}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    i === 0 && 'rounded-r-none rounded-l-xl',
+                    i === arr.length - 1 && 'rounded-l-none rounded-r-xl',
+                    i > 0 && i < arr.length - 1 && 'rounded-none',
+                    inboxViewType === btn.type &&
+                      'bg-[var(--layer-capture-bg)] text-[var(--layer-capture)]'
+                  )}
+                  onClick={() => setInboxViewType(btn.type)}
+                  title={`${btn.label} view`}
+                >
+                  <btn.icon className="h-4 w-4" />
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -230,7 +259,7 @@ export function InboxPageClient({ initialItems, destinations, spaces, projects, 
             title="Inbox Zero!"
             description="All captured thoughts have been processed. Use the capture bar below to add something new."
           />
-        ) : (
+        ) : inboxViewType === 'list' ? (
           <div className="mx-auto max-w-3xl space-y-3">
             <AnimatePresence mode="popLayout">
               {captureItems.map((item, index) => (
@@ -249,7 +278,7 @@ export function InboxPageClient({ initialItems, destinations, spaces, projects, 
                     onUpdate={handleUpdateItem}
                     onDelete={handleDeleteItem}
                     onMove={handleMoveToDestination}
-                    onClick={() => setSelectedItem(item)}
+                    onClick={() => openProcessingPanel(item.id)}
                     onAISuggest={handleAISuggest}
                     showAIButton
                   />
@@ -270,20 +299,24 @@ export function InboxPageClient({ initialItems, destinations, spaces, projects, 
               ))}
             </AnimatePresence>
           </div>
+        ) : inboxViewType === 'grid' ? (
+          <InboxGridView
+            items={captureItems}
+            destinations={destinations}
+            onUpdate={handleUpdateItem}
+            onDelete={handleDeleteItem}
+            onProcess={(item) => openProcessingPanel(item.id)}
+          />
+        ) : (
+          <InboxCompactView
+            items={captureItems}
+            destinations={destinations}
+            onUpdate={handleUpdateItem}
+            onDelete={handleDeleteItem}
+            onProcess={(item) => openProcessingPanel(item.id)}
+          />
         )}
       </div>
-
-      {/* Item detail panel */}
-      <ItemDetailPanel
-        item={selectedItem}
-        destinations={destinations}
-        spaces={spaces}
-        projects={projects}
-        isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
-        onUpdate={handleUpdateItem}
-        onDelete={handleDeleteItem}
-      />
     </div>
   );
 }

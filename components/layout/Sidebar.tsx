@@ -27,8 +27,14 @@ import {
   ChevronDown,
   Plus,
   FileText,
+  Folder,
   type LucideIcon,
 } from 'lucide-react';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
 import { ICON_MAP, COLOR_PALETTE } from '@/components/icons';
 import { OffMindLogo } from '@/components/brand/OffMindLogo';
 
@@ -592,9 +598,9 @@ export function Sidebar({ inboxCount = 0, spaces = [] }: SidebarProps) {
             })}
           </nav>
 
-          {/* -- Spaces section (expanded only) ----------------------------- */}
-          <AnimatePresence>
-            {!sidebarCollapsed && (
+          {/* -- Spaces section ---------------------------------------------- */}
+          {!sidebarCollapsed ? (
+            <AnimatePresence>
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -629,8 +635,49 @@ export function Sidebar({ inboxCount = 0, spaces = [] }: SidebarProps) {
                   </Button>
                 </div>
               </motion.div>
-            )}
-          </AnimatePresence>
+            </AnimatePresence>
+          ) : spaces.length > 0 ? (
+            <div className="py-1">
+              <div className="mx-3 my-1 h-px bg-[var(--border-subtle)]" />
+              <Popover>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <PopoverTrigger asChild>
+                        <button
+                          className="flex w-full items-center justify-center rounded-xl py-2.5 text-[var(--text-muted)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-all duration-200"
+                        >
+                          <Folder className="h-[18px] w-[18px]" />
+                        </button>
+                      </PopoverTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Spaces</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <PopoverContent
+                  side="right"
+                  align="start"
+                  sideOffset={8}
+                  className="w-64 p-2 rounded-2xl border-[var(--border-subtle)] bg-[var(--bg-surface)] shadow-[var(--shadow-float)]"
+                >
+                  <div className="space-y-0.5">
+                    <h3 className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                      Spaces
+                    </h3>
+                    {spaces.map((space) => (
+                      <SpaceTreeItem
+                        key={space.id}
+                        space={space}
+                        pathname={pathname}
+                        isExpanded={sidebarExpandedNodes.includes(space.id)}
+                        onToggle={toggleSidebarNode}
+                      />
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          ) : null}
         </ScrollArea>
 
         {/* ---- Bottom section --------------------------------------------- */}

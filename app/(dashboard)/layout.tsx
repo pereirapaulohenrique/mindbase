@@ -69,6 +69,13 @@ export default async function DashboardLayout({
     .eq('user_id', user.id)
     .order('sort_order');
 
+  // Get contacts for ProcessingPanel autocomplete
+  const { data: contacts } = await supabase
+    .from('contacts')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('name');
+
   // Build tree: spaces → projects → pages
   const spacesTree = (spaces || []).map((space) => ({
     ...space,
@@ -122,6 +129,7 @@ export default async function DashboardLayout({
           destinations={(destinations || []) as any}
           spaces={(spaces || []) as any}
           projects={(projects || []) as any}
+          contacts={(contacts || []) as any}
           userId={user.id}
         />
 

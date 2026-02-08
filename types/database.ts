@@ -393,6 +393,38 @@ export interface Database {
           connected_at?: string;
         };
       };
+      contacts: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          email: string | null;
+          phone: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          email?: string | null;
+          phone?: string | null;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string;
+          email?: string | null;
+          phone?: string | null;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
@@ -424,6 +456,7 @@ export type Item = Tables<'items'>;
 export type Page = Tables<'pages'>;
 export type AILog = Tables<'ai_logs'>;
 export type TelegramConnection = Tables<'telegram_connections'>;
+export type Contact = Tables<'contacts'>;
 
 // Attachment type for items
 export interface Attachment {

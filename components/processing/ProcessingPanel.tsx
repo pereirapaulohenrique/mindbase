@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Maximize2, Minimize2, Trash2, CheckCircle2, Loader2 } from 'lucide-react';
+import { X, Maximize2, Minimize2, Trash2, CheckCircle2, Loader2, Send } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useUIStore } from '@/stores/ui';
 import { useItemsStore } from '@/stores/items';
@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ICON_MAP, COLOR_PALETTE } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import type { Item, Destination, Space, Project, Json } from '@/types/database';
+import type { Item, Destination, Space, Project, Contact, Json } from '@/types/database';
 import type { CustomFieldDefinition } from '@/types';
 
 // ---------------------------------------------------------------------------
@@ -24,6 +24,7 @@ interface ProcessingPanelProps {
   destinations: Destination[];
   spaces: Space[];
   projects: Project[];
+  contacts?: Contact[];
   userId: string;
 }
 
@@ -95,6 +96,7 @@ export function ProcessingPanel({
   destinations,
   spaces,
   projects,
+  contacts,
   userId,
 }: ProcessingPanelProps) {
   // ---- Zustand state ----
@@ -124,6 +126,9 @@ export function ProcessingPanel({
   const [isAllDay, setIsAllDay] = useState(false);
   const [waitingFor, setWaitingFor] = useState('');
   const [customValues, setCustomValues] = useState<Record<string, unknown>>({});
+
+  // Contact suggestions
+  const [showContactSuggestions, setShowContactSuggestions] = useState(false);
 
   // Delete confirmation
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -336,64 +341,44 @@ export function ProcessingPanel({
     setDestinationId(destId);
 
     const dest = destinations.find((d) => d.id === destId);
-    const updates: Partial<Item> = { destination_id: destId };
-
-    // When switching to waiting, auto-set waiting_since
-    if (dest?.slug === 'waiting' && !item?.waiting_since) {
-      const now = new Date().toISOString();
-      updates.waiting_since = now;
-    }
 
     // Clear waiting fields if leaving waiting
     if (dest?.slug !== 'waiting' && waitingFor) {
       setWaitingFor('');
-      updates.waiting_for = null;
     }
-
-    debouncedSave(updates);
   };
 
   const handleSpaceChange = (value: string) => {
     const resolved = value === 'none' ? null : value;
     setSpaceId(resolved);
-    debouncedSave({ space_id: resolved });
   };
 
   const handleProjectChange = (value: string) => {
     const resolved = value === 'none' ? null : value;
     setProjectId(resolved);
-    debouncedSave({ project_id: resolved });
   };
 
   const handleScheduledAtChange = (value: string) => {
     setScheduledAt(value);
-    debouncedSave({ scheduled_at: value ? new Date(value).toISOString() : null });
   };
 
   const handleDurationChange = (value: string) => {
     const mins = value ? parseInt(value, 10) : null;
     setDurationMinutes(mins);
-    debouncedSave({ duration_minutes: mins });
   };
 
   const handleAllDayToggle = () => {
     const next = !isAllDay;
     setIsAllDay(next);
-    debouncedSave({ is_all_day: next });
   };
 
   const handleWaitingForChange = (value: string) => {
     setWaitingFor(value);
-    debouncedSave({
-      waiting_for: value || null,
-      waiting_since: value && !item?.waiting_since ? new Date().toISOString() : item?.waiting_since ?? null,
-    });
   };
 
   const handleCustomValueChange = (key: string, value: unknown) => {
     const next = { ...customValues, [key]: value };
     setCustomValues(next);
-    debouncedSave({ custom_values: next as Json });
   };
 
   // ---- Delete ----
@@ -458,6 +443,64 @@ export function ProcessingPanel({
     }
   };
 
+  // ---- Save & Route ----
+  const handleSaveAndRoute = async () => {
+    if (!item) return;
+
+    // Clear any pending debounce timer
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+
+    const now = new Date().toISOString();
+
+    // Determine layer
+    let layer = item.layer;
+    if (scheduledAt) {
+      layer = 'commit';
+    } else if (destinationId && item.layer === 'capture') {
+      layer = 'process';
+    }
+
+    // Determine waiting_since
+    const dest = destinations.find((d) => d.id === destinationId);
+    let waitingSince = item.waiting_since;
+    if (dest?.slug === 'waiting' && waitingFor && !item.waiting_since) {
+      waitingSince = now;
+    }
+
+    const updates: Partial<Item> = {
+      title,
+      notes: notes || null,
+      destination_id: destinationId,
+      space_id: spaceId,
+      project_id: projectId,
+      scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : null,
+      duration_minutes: durationMinutes,
+      is_all_day: isAllDay,
+      waiting_for: waitingFor || null,
+      waiting_since: waitingSince,
+      custom_values: Object.keys(customValues).length > 0 ? (customValues as Json) : null,
+      layer,
+      updated_at: now,
+    };
+
+    try {
+      const supabaseClient = createClient();
+      const { error } = await supabaseClient
+        .from('items')
+        .update(updates as Record<string, unknown>)
+        .eq('id', item.id);
+
+      if (error) throw error;
+
+      const routed = { ...item, ...updates } as Item;
+      updateItem(routed);
+      toast.success('Item saved and routed');
+      closeProcessingPanel();
+    } catch {
+      toast.error('Failed to save');
+    }
+  };
+
   // ---- Keyboard shortcuts ----
   useEffect(() => {
     if (!processingPanelOpen) return;
@@ -470,13 +513,17 @@ export function ProcessingPanel({
 
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
         e.preventDefault();
-        forceSave();
+        if (destinationId) {
+          handleSaveAndRoute();
+        } else {
+          forceSave();
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [processingPanelOpen, closeProcessingPanel, forceSave]);
+  }, [processingPanelOpen, closeProcessingPanel, forceSave, destinationId]);
 
   // Reset delete confirmation when destination changes
   useEffect(() => {
@@ -872,14 +919,44 @@ export function ProcessingPanel({
                         {/* Waiting-specific fields */}
                         {showWaitingSection && (
                           <>
-                            <div className="space-y-1.5">
+                            <div className="relative space-y-1.5">
                               <label className="text-xs font-medium text-neutral-400">Waiting For</label>
                               <Input
                                 value={waitingFor}
-                                onChange={(e) => handleWaitingForChange(e.target.value)}
+                                onChange={(e) => {
+                                  handleWaitingForChange(e.target.value);
+                                  setShowContactSuggestions(true);
+                                }}
+                                onFocus={() => setShowContactSuggestions(true)}
+                                onBlur={() => setTimeout(() => setShowContactSuggestions(false), 200)}
                                 placeholder="Person or thing you're waiting on"
                                 className="h-9 rounded-xl border-white/[0.08] bg-white/[0.03]"
                               />
+                              {showContactSuggestions && waitingFor && contacts && contacts.length > 0 && (() => {
+                                const filtered = contacts.filter((c) =>
+                                  c.name.toLowerCase().includes(waitingFor.toLowerCase())
+                                ).slice(0, 5);
+                                if (filtered.length === 0) return null;
+                                return (
+                                  <div className="absolute top-full left-0 right-0 z-50 mt-1 max-h-36 overflow-y-auto rounded-xl border border-white/[0.08] bg-[#1c1917] shadow-lg">
+                                    {filtered.map((c) => (
+                                      <button
+                                        key={c.id}
+                                        type="button"
+                                        onMouseDown={(e) => e.preventDefault()}
+                                        onClick={() => {
+                                          handleWaitingForChange(c.name);
+                                          setShowContactSuggestions(false);
+                                        }}
+                                        className="w-full text-left px-3 py-2 text-sm text-neutral-300 hover:bg-white/[0.06] transition-colors"
+                                      >
+                                        {c.name}
+                                        {c.email && <span className="ml-2 text-xs text-neutral-500">{c.email}</span>}
+                                      </button>
+                                    ))}
+                                  </div>
+                                );
+                              })()}
                             </div>
                             {item.waiting_since && (
                               <div className="space-y-1">
@@ -1046,7 +1123,7 @@ export function ProcessingPanel({
             {/* ================================================================ */}
             {item && !isLoading && (
               <div className="flex shrink-0 items-center justify-between border-t border-white/[0.06] px-5 py-3">
-                {/* Delete */}
+                {/* Delete (left) */}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -1062,19 +1139,35 @@ export function ProcessingPanel({
                   {confirmDelete ? 'Confirm Delete' : 'Delete'}
                 </Button>
 
-                {/* Done */}
-                <Button
-                  size="sm"
-                  onClick={handleDone}
-                  className={cn(
-                    'gap-2 rounded-xl',
-                    'bg-[#c2410c] text-white hover:bg-[#c2410c]/90',
-                    'shadow-[0_2px_12px_rgba(194,65,12,0.25)]',
-                  )}
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                  Done
-                </Button>
+                {/* Right-side buttons */}
+                <div className="flex items-center gap-2">
+                  {/* Save & Route */}
+                  <Button
+                    size="sm"
+                    onClick={handleSaveAndRoute}
+                    disabled={!destinationId}
+                    className={cn(
+                      'gap-2 rounded-xl',
+                      'bg-[#c2410c] text-white hover:bg-[#c2410c]/90',
+                      'shadow-[0_2px_12px_rgba(194,65,12,0.25)]',
+                      !destinationId && 'opacity-50 cursor-not-allowed',
+                    )}
+                  >
+                    <Send className="h-4 w-4" />
+                    Save & Route
+                  </Button>
+
+                  {/* Complete */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDone}
+                    className="gap-2 rounded-xl text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    Complete
+                  </Button>
+                </div>
               </div>
             )}
           </motion.div>
